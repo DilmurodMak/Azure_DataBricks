@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.Odbc;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 class Program
 {
@@ -10,19 +12,22 @@ class Program
 
     static private void CreateOdbcConnection()
     {
+        // Read the connection settings from the JSON file
+        var connectionSettings = JObject.Parse(File.ReadAllText("connectionSettings.json"));
+
         // Use OdbcConnectionStringBuilder to construct the connection string
         OdbcConnectionStringBuilder builder = new OdbcConnectionStringBuilder();
 
-        // Set the properties for the connection string
-        builder.Driver = "Simba Spark ODBC Driver";
-        builder.Add("Host", "<your_adb_host>");
-        builder.Add("Port", "443");
-        builder.Add("HTTPPath", "sql/protocolv1/o/3775820491380537/0801-184302-vhql1pfz");
-        builder.Add("AuthMech", "3");
-        builder.Add("UID", "token");
-        builder.Add("PWD", "<your_adb_token>");
-        builder.Add("SSL", "1");
-        builder.Add("ThriftTransport", "2");
+        // Set the properties for the connection string from the JSON file
+        builder.Driver = connectionSettings["Driver"].ToString();
+        builder.Add("Host", connectionSettings["Host"].ToString());
+        builder.Add("Port", connectionSettings["Port"].ToString());
+        builder.Add("HTTPPath", connectionSettings["HTTPPath"].ToString());
+        builder.Add("AuthMech", connectionSettings["AuthMech"].ToString());
+        builder.Add("UID", connectionSettings["UID"].ToString());
+        builder.Add("PWD", connectionSettings["PWD"].ToString());
+        builder.Add("SSL", connectionSettings["SSL"].ToString());
+        builder.Add("ThriftTransport", connectionSettings["ThriftTransport"].ToString());
 
         // Get the constructed connection string
         string connectionString = builder.ConnectionString;
@@ -36,7 +41,7 @@ class Program
                 Console.WriteLine("Connection opened successfully.");
 
                 // Example query
-                string query = "SELECT * FROM gold.gold_roads LIMIT 10";
+                string query = "SELECT * FROM dev_catalog.bronze.raw_roads LIMIT 10";
 
                 using (OdbcCommand command = new OdbcCommand(query, connection))
                 {

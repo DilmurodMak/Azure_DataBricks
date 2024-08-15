@@ -2,6 +2,7 @@
 bin/
 obj/
 out/
+connectionSettings.json
 
 # User-specific files
 *.user
