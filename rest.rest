@@ -19,7 +19,7 @@ curl -X POST https://<yout_adb_host>/api/2.0/sql/statements \
 --data '{
   "warehouse_id" : "",
   "cluster_id": "3775820491380537",
-  "catalog": "gold",
-  "schema": "gold",
-  "statement": "SELECT * FROM gold.gold_roads LIMIT 10"
+  "catalog": "bronze",
+  "schema": "bronze",
+  "statement": "SELECT * FROM dev_catalog.bronze.raw_roads LIMIT 10"
 }'

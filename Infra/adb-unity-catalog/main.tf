@@ -128,12 +128,9 @@ resource "databricks_storage_credential" "external_mi" {
 // Create external location to be used as root storage by dev catalog
 resource "databricks_external_location" "dev_location" {
   name = "dev-catalog-external-location"
-  url = replace(
-      format("abfss://%s@%s.dfs.core.windows.net",
+  url = format("abfss://%s@%s.dfs.core.windows.net",
         azurerm_storage_container.dev_catalog.name,
-        module.metastore_and_users.azurerm_storage_account_unity_catalog.name),
-      "/$", ""  # This line removes the trailing slash, if any
-    )
+        module.metastore_and_users.azurerm_storage_account_unity_catalog.name)
   credential_name = databricks_storage_credential.external_mi.id
   owner           = "account_unity_admin"
   comment         = "External location used by dev catalog as root storage"
@@ -145,7 +142,7 @@ resource "databricks_catalog" "dev" {
   name         = "dev_catalog"
   comment      = "this catalog is for dev env"
   owner        = "account_unity_admin"
-  storage_root = databricks_external_location.dev_location.url
+  storage_root = replace(databricks_external_location.dev_location.url,  "/$", "") # remove trailing slash
   properties = {
     purpose = "dev"
   }
