@@ -23,3 +23,11 @@ This repo contains terrafrom code to create a Databricks workspace, Databricks U
 ## REST API
 
 Example usage of a Databricks REST API. [here](rest.rest)
+
+## Resources
+
+[Databricks REST API](https://docs.databricks.com/api/azure/workspace/introduction)
+
+[Azure Databricks Unity Catalog E2E Terraform Samples](https://github.com/databricks/terraform-databricks-examples/tree/main/examples/adb-unity-catalog-basic-demo)
+
+[ODBC Class .NET](https://learn.microsoft.com/en-us/dotnet/api/system.data.odbc.odbcconnection?view=net-8.0)
