@@ -9,3 +9,6 @@ variable "aad_groups" {
   description = "List of AAD groups that you want to add to Databricks account"
   type        = list(string)
 }
+variable "metastore_name"{
+  description = "Name of the metastore"
+}

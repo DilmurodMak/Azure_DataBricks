@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabricksOdbcApp", "DatabricksOdbcApp.csproj", "{170E1FC8-DCC1-480D-903B-FA7DCBC239C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabricksOdbcApp", "DatabricksOdbcApp.csproj", "{A86F41CA-64A3-4CBB-8188-79B7C71DF142}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{170E1FC8-DCC1-480D-903B-FA7DCBC239C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{170E1FC8-DCC1-480D-903B-FA7DCBC239C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{170E1FC8-DCC1-480D-903B-FA7DCBC239C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{170E1FC8-DCC1-480D-903B-FA7DCBC239C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A86F41CA-64A3-4CBB-8188-79B7C71DF142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A86F41CA-64A3-4CBB-8188-79B7C71DF142}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A86F41CA-64A3-4CBB-8188-79B7C71DF142}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A86F41CA-64A3-4CBB-8188-79B7C71DF142}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

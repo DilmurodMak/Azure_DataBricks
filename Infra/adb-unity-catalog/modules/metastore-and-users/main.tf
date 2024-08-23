@@ -91,6 +91,8 @@ resource "databricks_metastore_data_access" "first" {
     access_connector_id = azurerm_databricks_access_connector.unity.id
   }
   is_default = true
+
+  depends_on = [databricks_metastore.this]
 }
 
 // Attach the databricks workspace to the metastore
@@ -99,7 +101,6 @@ resource "databricks_metastore_assignment" "this" {
   metastore_id         = databricks_metastore.this.id
   default_catalog_name = "hive_metastore"
 }
-
 
 // Initialize provider at Azure account-level
 provider "databricks" {

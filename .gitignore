@@ -79,10 +79,10 @@ ScaffoldingReadMe.txt
 # Ignore .terraform directories recursively
 **/.terraform/*
 *terraform.tfvars
-
+*/.terraform/*
 # .tfstate files
 *.tfstate
-*.tfstate.*
+*.tfstate.backup
 
 # Crash log files
 crash.log

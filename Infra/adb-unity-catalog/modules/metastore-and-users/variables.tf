@@ -17,3 +17,6 @@ variable "account_id" {
 variable "prefix" {
   description = "Prefix to be used with resouce names"
 }
+variable "metastore_name"{
+  description = "Name of the metastore"
+}

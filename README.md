@@ -18,8 +18,8 @@ This repo contains terrafrom code to create a Databricks workspace, Databricks U
 
 ## C# Code
 
-`CSharp` folder contains a C# code to retrieve the catalog table content using JDBC connection.
+`CSharp` folder contains a C# code to retrieve the catalog table content using JDBC connection. [here](Program.cs)
 
 ## REST API
 
-Example usage of a Databricks REST API
+Example usage of a Databricks REST API. [here](rest.rest)

@@ -60,6 +60,7 @@ module "metastore_and_users" {
   resource_group            = local.resource_group
   aad_groups                = var.aad_groups
   account_id                = var.account_id
+  metastore_name            = var.metastore_name
   prefix                    = local.prefix
 }
 
