@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %run "/Users/shanmukh@shanmukhsattiraju.com/04. Common"
+# MAGIC %run "./04. Common"
 
 # COMMAND ----------
 
@@ -9,9 +9,9 @@ env = dbutils.widgets.get("env")
 # COMMAND ----------
 
 def create_Bronze_Schema(environment,path):
-    print(f'Using {environment}_Catalog ')
-    spark.sql(f""" USE CATALOG '{environment}_catalog'""")
-    print(f'Creating Bronze Schema in {environment}_Catalog')
+    print(f'Using {environment}_catalog ')
+    spark.sql(f""" USE CATALOG '{environment}_Catalog'""")
+    print(f'Creating Bronze Schema in {environment}_catalog')
     spark.sql(f"""CREATE SCHEMA IF NOT EXISTS `bronze` MANAGED LOCATION '{path}/bronze'""")
     print("************************************")
 
@@ -35,15 +35,15 @@ def create_Gold_Schema(environment,path):
 
 # COMMAND ----------
 
-create_Bronze_Schema(env,bronze_path)
+create_Bronze_Schema(env,bronze)
 
 # COMMAND ----------
 
-create_Silver_Schema(env,silver_path)
+create_Silver_Schema(env,silver)
 
 # COMMAND ----------
 
-create_Gold_Schema(env,gold_path)
+create_Gold_Schema(env,gold)
 
 # COMMAND ----------
 
@@ -124,10 +124,10 @@ def createTable_rawRoad(environment):
 
 # COMMAND ----------
 
-create_Bronze_Schema(env,bronze_path)
+create_Bronze_Schema(env,bronze)
 createTable_rawTraffic(env)
 createTable_rawRoad(env)
 
 
-create_Silver_Schema(env,silver_path)
-create_Gold_Schema(env,gold_path)
+create_Silver_Schema(env,silver)
+create_Gold_Schema(env,gold)

@@ -5,7 +5,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Users/shanmukh@shanmukhsattiraju.com/04. Common"
+# MAGIC %run "./04. Common"
 
 # COMMAND ----------
 
@@ -153,4 +153,5 @@ write_Traffic_GoldTable(df_FinalTraffic,env)
 write_Roads_GoldTable(df_FinalRoads,env)
 
 # COMMAND ----------
+
 

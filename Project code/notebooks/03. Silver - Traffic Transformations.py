@@ -5,7 +5,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Users/shanmukh@shanmukhsattiraju.com/04. Common"
+# MAGIC %run "./04. Common"
 
 # COMMAND ----------
 
@@ -196,4 +196,5 @@ write_Traffic_SilverTable(df_final, env)
 # MAGIC ORDER BY Record_ID
 
 # COMMAND ----------
+
 

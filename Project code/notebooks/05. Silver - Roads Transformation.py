@@ -5,7 +5,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Users/shanmukh@shanmukhsattiraju.com/04. Common"
+# MAGIC %run "./04. Common"
 
 # COMMAND ----------
 
@@ -133,4 +133,5 @@ df_type = road_Type(df_roadCat)
 write_Roads_SilverTable(df_type,env)
 
 # COMMAND ----------
+
 
