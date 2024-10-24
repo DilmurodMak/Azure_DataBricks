@@ -1,0 +1,13 @@
+# # The main pipeline for AZURE_DATABRICKS
+# resources:
+#   pipelines:
+#     AZURE_DATABRICKS_pipeline:
+#       name: AZURE_DATABRICKS_pipeline
+#       catalog: databricks_dev_ws
+#       target: AZURE_DATABRICKS_${bundle.environment}
+#       libraries:
+#         - notebook:
+#             path: ../src/dlt_pipeline.ipynb
+
+#       configuration:
+#         bundle.sourcePath: ${workspace.file_path}/src

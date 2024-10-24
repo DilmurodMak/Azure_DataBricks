@@ -1,0 +1,55 @@
+# Databricks ETL Flow Job
+resources:
+  jobs:
+    ETL_Flow:
+      name: ETL Flow
+      trigger:
+        pause_status: UNPAUSED
+        file_arrival:
+          url: abfss://landing@databricksstdev2.dfs.core.windows.net/raw_traffic/
+      tasks:
+        - task_key: load_to_bronze
+          notebook_task:
+            notebook_path: src/02. Load to bronze
+            base_parameters:
+              env: dev
+            source: GIT
+        - task_key: silver_traffic
+          depends_on:
+            - task_key: load_to_bronze
+          notebook_task:
+            notebook_path: src/03. Silver - Traffic Transformations
+            base_parameters:
+              env: dev
+            source: GIT
+        - task_key: silver_roads
+          depends_on:
+            - task_key: silver_traffic
+          notebook_task:
+            notebook_path: src/05. Silver - Roads Transformation
+            base_parameters:
+              env: dev
+            source: GIT
+        - task_key: gold
+          depends_on:
+            - task_key: silver_roads
+          notebook_task:
+            notebook_path: src/06. Gold - Final Transformations and loading
+            base_parameters:
+              env: dev
+            source: GIT
+      git_source:
+        git_url: https://github.com/DilmurodMak/Azure_DataBricks/
+        git_provider: gitHub
+        git_branch: main
+      queue:
+        enabled: true
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_D4ds_v5
+            autoscale:
+                min_workers: 1
+                max_workers: 4
