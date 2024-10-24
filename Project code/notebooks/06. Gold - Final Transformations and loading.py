@@ -56,15 +56,22 @@ def read_SilverRoadsTable(environment):
 
 # COMMAND ----------
 
+from pyspark.sql.functions import col, when
+
 def create_VehicleIntensity(df):
- from pyspark.sql.functions import col
- print('Creating Vehicle Intensity column : ',end='')
- df_veh = df.withColumn('Vehicle_Intensity',
-            col('Motor_Vehicles_Count') / col('Link_length_km')
-        )
- print("Success!!!")
- print('***************')
- return df_veh
+    print('Creating Vehicle Intensity column : ', end='')
+
+    # Ensure Link_length_km is not null and not zero before performing division
+    df_veh = df.withColumn(
+        'Vehicle_Intensity',
+        when(col('Link_length_km').isNotNull() & (col('Link_length_km') != 0), 
+             col('Motor_Vehicles_Count') / col('Link_length_km'))
+        .otherwise(None)  # Set to None if Link_length_km is null or 0
+    )
+    
+    print("Success!!!")
+    print('***************')
+    return df_veh
 
 # COMMAND ----------
 
