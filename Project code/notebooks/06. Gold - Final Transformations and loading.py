@@ -60,7 +60,8 @@ def create_VehicleIntensity(df):
  from pyspark.sql.functions import col
  print('Creating Vehicle Intensity column : ',end='')
  df_veh = df.withColumn('Vehicle_Intensity',
-               col('Motor_Vehicles_Count') / col('Link_length_km')
+                when(col('Link_length_km') != 0, col('Motor_Vehicles_Count') / col('Link_length_km'))
+                .otherwise(None) 
                )
  print("Success!!!")
  print('***************')
