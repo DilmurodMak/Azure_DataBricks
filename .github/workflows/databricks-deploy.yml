@@ -37,7 +37,8 @@ jobs:
       - name: Install Python and Dependencies
         run: | 
           uv python install ${{ env.PYTHON_VERSION }}
-          uv tool install ruff pytest
+          uv tool install ruff
+          uv tool install pytest
       
       - name: Run Ruff Lint
         run: |
