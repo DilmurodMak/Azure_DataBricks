@@ -43,7 +43,10 @@ jobs:
 
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
-      - run: databricks bundle deploy
+      - run: |
+            echo $BUNDLE_VAR_ADB_HOST_DEV 
+            echo $BUNDLE_VAR_FILE_LANDING_DEV
+            databricks bundle deploy
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
