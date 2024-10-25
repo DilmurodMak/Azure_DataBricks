@@ -18,7 +18,7 @@ targets:
       host: https://adb-905511363347848.8.azuredatabricks.net
 
   prod:
-    mode: production
+    mode: staging
     workspace:
       host: https://adb-905511363347848.8.azuredatabricks.net
       # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
