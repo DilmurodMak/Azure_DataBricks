@@ -52,25 +52,25 @@ jobs:
           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
           
 
-#   # Validate, deploy, and then run the bundle.
-#   pipeline_update:
-#     name: "Run pipeline update"
-#     runs-on: ubuntu-latest
+  # Validate, deploy, and then run the bundle.
+  pipeline_update:
+    name: "Run pipeline update"
+    runs-on: ubuntu-latest
 
-#     # Run the "deploy" job first.
-#     needs:
-#       - deploy
+    # Run the "deploy" job first.
+    needs:
+      - deploy
 
-#     steps:
-#       # Check out this repo, so that this workflow can access it.
-#       - uses: actions/checkout@v4
+    steps:
+      # Check out this repo, so that this workflow can access it.
+      - uses: actions/checkout@v4
 
-#       # Use the downloaded Databricks CLI.
-#       - uses: databricks/setup-cli@main
+      # Use the downloaded Databricks CLI.
+      - uses: databricks/setup-cli@main
 
-#       # Run the Databricks workflow named 
-#       - run: databricks bundle run ETL_Flow --refresh-all
-#         working-directory: .
-#         env:
-#           DATABRICKS_TOKEN: ${{ secrets.SP_TOKEN }}
-#           DATABRICKS_BUNDLE_ENV: 
+      # Run the Databricks workflow named 
+      - run: databricks bundle run ETL_Flow --refresh-all
+        working-directory: .
+        env:
+          DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
+          DATABRICKS_BUNDLE_ENV: 
