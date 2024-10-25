@@ -9,7 +9,9 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text(name="env",defaultValue='',label='Enter the environment in lower case')
+dbutils.widgets.text(
+    name="env", defaultValue="", label="Enter the environment in lower case"
+)
 env = dbutils.widgets.get("env")
 
 # COMMAND ----------
@@ -22,12 +24,13 @@ env = dbutils.widgets.get("env")
 
 
 def read_BronzeTrafficTable(environment):
-    print('Reading the Bronze Table Data : ',end='')
-    df_bronzeTraffic = (spark.readStream
-                    .table(f"`{environment}_catalog`.`bronze`.raw_traffic")
-                    )
-    print(f'Reading {environment}_catalog.bronze.raw_traffic Success!')
+    print("Reading the Bronze Table Data : ", end="")
+    df_bronzeTraffic = spark.readStream.table(
+        f"`{environment}_catalog`.`bronze`.raw_traffic"
+    )
+    print(f"Reading {environment}_catalog.bronze.raw_traffic Success!")
     return df_bronzeTraffic
+
 
 # COMMAND ----------
 
@@ -37,11 +40,13 @@ def read_BronzeTrafficTable(environment):
 
 # COMMAND ----------
 
+
 def remove_Dups(df):
-    print('Removing Duplicate values: ', end='')
+    print("Removing Duplicate values: ", end="")
     df_dup = df.dropDuplicates()
-    print('Success!! ')
+    print("Success!! ")
     return df_dup
+
 
 # COMMAND ----------
 
@@ -51,16 +56,18 @@ def remove_Dups(df):
 
 # COMMAND ----------
 
-def handle_NULLs(df,columns):
-    print('Replacing NULL values on String Columns with "Unknown" ' , end='')
-    df_string = df.fillna('Unknown',subset= columns)
-    print('Successs!! ')
 
-    print('Replacing NULL values on Numeric Columns with "0" ' , end='')
-    df_clean = df_string.fillna(0,subset = columns)
-    print('Success!! ')
+def handle_NULLs(df, columns):
+    print('Replacing NULL values on String Columns with "Unknown" ', end="")
+    df_string = df.fillna("Unknown", subset=columns)
+    print("Successs!! ")
+
+    print('Replacing NULL values on Numeric Columns with "0" ', end="")
+    df_clean = df_string.fillna(0, subset=columns)
+    print("Success!! ")
 
     return df_clean
+
 
 # COMMAND ----------
 
@@ -71,15 +78,16 @@ def handle_NULLs(df,columns):
 
 # COMMAND ----------
 
+
 def ev_Count(df):
-    print('Creating Electric Vehicles Count Column : ', end='')
+    print("Creating Electric Vehicles Count Column : ", end="")
     from pyspark.sql.functions import col
-    df_ev = df.withColumn('Electric_Vehicles_Count',
-                            col('EV_Car') + col('EV_Bike')
-                            )
-    
-    print('Success!! ')
+
+    df_ev = df.withColumn("Electric_Vehicles_Count", col("EV_Car") + col("EV_Bike"))
+
+    print("Success!! ")
     return df_ev
+
 
 # COMMAND ----------
 
@@ -90,15 +98,24 @@ def ev_Count(df):
 
 # COMMAND ----------
 
+
 def Motor_Count(df):
-    print('Creating All Motor Vehicles Count Column : ', end='')
+    print("Creating All Motor Vehicles Count Column : ", end="")
     from pyspark.sql.functions import col
-    df_motor = df.withColumn('Motor_Vehicles_Count',
-                            col('Electric_Vehicles_Count') + col('Two_wheeled_motor_vehicles') + col('Cars_and_taxis') + col('Buses_and_coaches') + col('LGV_Type') + col('HGV_Type')
-                            )
-    
-    print('Success!! ')
+
+    df_motor = df.withColumn(
+        "Motor_Vehicles_Count",
+        col("Electric_Vehicles_Count")
+        + col("Two_wheeled_motor_vehicles")
+        + col("Cars_and_taxis")
+        + col("Buses_and_coaches")
+        + col("LGV_Type")
+        + col("HGV_Type"),
+    )
+
+    print("Success!! ")
     return df_motor
+
 
 # COMMAND ----------
 
@@ -108,14 +125,15 @@ def Motor_Count(df):
 
 # COMMAND ----------
 
+
 def create_TransformedTime(df):
     from pyspark.sql.functions import current_timestamp
-    print('Creating Transformed Time column : ',end='')
-    df_timestamp = df.withColumn('Transformed_Time',
-                      current_timestamp()
-                      )
-    print('Success!!')
+
+    print("Creating Transformed Time column : ", end="")
+    df_timestamp = df.withColumn("Transformed_Time", current_timestamp())
+    print("Success!!")
     return df_timestamp
+
 
 # COMMAND ----------
 
@@ -132,22 +150,24 @@ def create_TransformedTime(df):
 
 # COMMAND ----------
 
-def write_Traffic_SilverTable(StreamingDF,environment):
-    print('Writing the silver_traffic Data : ',end='') 
 
-    write_StreamSilver = (StreamingDF.writeStream
-                .format('delta')
-                .option('checkpointLocation',checkpoint+ "/SilverTrafficLoad/Checkpt/")
-                .outputMode('append')
-                .queryName("SilverTrafficWriteStream")
-                .trigger(availableNow=True)
-                .toTable(f"`{environment}_catalog`.`silver`.`silver_traffic`"))
-    
+def write_Traffic_SilverTable(StreamingDF, environment):
+    print("Writing the silver_traffic Data : ", end="")
+
+    write_StreamSilver = (
+        StreamingDF.writeStream.format("delta")
+        .option("checkpointLocation", checkpoint + "/SilverTrafficLoad/Checkpt/")
+        .outputMode("append")
+        .queryName("SilverTrafficWriteStream")
+        .trigger(availableNow=True)
+        .toTable(f"`{environment}_catalog`.`silver`.`silver_traffic`")
+    )
+
     write_StreamSilver.awaitTermination()
-    print(f'Writing `{environment}_catalog`.`silver`.`silver_traffic` Success!')
+    print(f"Writing `{environment}_catalog`.`silver`.`silver_traffic` Success!")
+
 
 # COMMAND ----------
-
 
 
 # COMMAND ----------
@@ -161,8 +181,8 @@ df_trafficdata = read_BronzeTrafficTable(env)
 df_dups = remove_Dups(df_trafficdata)
 
 # To raplce any NULL values
-Allcolumns =df_dups.schema.names
-df_nulls = handle_NULLs(df_dups,Allcolumns)
+Allcolumns = df_dups.schema.names
+df_nulls = handle_NULLs(df_dups, Allcolumns)
 
 ## To get the total EV_Count
 
@@ -196,5 +216,3 @@ write_Traffic_SilverTable(df_final, env)
 # MAGIC ORDER BY Record_ID
 
 # COMMAND ----------
-
-

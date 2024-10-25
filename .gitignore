@@ -109,3 +109,4 @@ __pycache__/
 .venv/
 scratch/**
 !scratch/README.md
+.ruff_cache

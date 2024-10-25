@@ -1,6 +1,6 @@
 # Databricks notebook source
-dbutils.fs.rm('dbfs:/user/hive/warehouse/stream.db',True)
-dbutils.fs.rm('dbfs:/FileStore/streaming',True)
+dbutils.fs.rm("dbfs:/user/hive/warehouse/stream.db", True)
+dbutils.fs.rm("dbfs:/FileStore/streaming", True)
 
 # COMMAND ----------
 
@@ -16,25 +16,26 @@ dbutils.fs.rm('dbfs:/FileStore/streaming',True)
 
 # COMMAND ----------
 
-source_dir = 'dbfs:/FileStore/streaming/'
+source_dir = "dbfs:/FileStore/streaming/"
 
 # COMMAND ----------
 
-df = spark.readStream\
-        .format('cloudFiles')\
-        .option("cloudFiles.format","csv")\
-        .option("cloudFiles.schemaLocation",f'{source_dir}/schemaInfer')\
-        .option("cloudFiles.inferColumnTypes","true")\
-        .option('header','true')\
-        .load(source_dir)
+df = (
+    spark.readStream.format("cloudFiles")
+    .option("cloudFiles.format", "csv")
+    .option("cloudFiles.schemaLocation", f"{source_dir}/schemaInfer")
+    .option("cloudFiles.inferColumnTypes", "true")
+    .option("header", "true")
+    .load(source_dir)
+)
 
 # COMMAND ----------
 
-dbutils.fs.ls(f'{source_dir}/schemaInfer')
+dbutils.fs.ls(f"{source_dir}/schemaInfer")
 
 # COMMAND ----------
 
-dbutils.fs.ls('dbfs:/FileStore/streaming/schemaInfer/_schemas/')
+dbutils.fs.ls("dbfs:/FileStore/streaming/schemaInfer/_schemas/")
 
 # COMMAND ----------
 
@@ -50,14 +51,15 @@ dbutils.fs.ls('dbfs:/FileStore/streaming/schemaInfer/_schemas/')
 
 # COMMAND ----------
 
-df = spark.readStream\
-        .format('cloudFiles')\
-        .option("cloudFiles.format","csv")\
-        .option("cloudFiles.schemaLocation",f'{source_dir}/schemaInfer')\
-        .option("cloudFiles.inferColumnTypes","true")\
-        .option('cloudFiles.schemaHints',"Citizens LONG")\
-        .option('header','true')\
-        .load(source_dir)
+df = (
+    spark.readStream.format("cloudFiles")
+    .option("cloudFiles.format", "csv")
+    .option("cloudFiles.schemaLocation", f"{source_dir}/schemaInfer")
+    .option("cloudFiles.inferColumnTypes", "true")
+    .option("cloudFiles.schemaHints", "Citizens LONG")
+    .option("header", "true")
+    .load(source_dir)
+)
 
 # COMMAND ----------
 
@@ -71,5 +73,3 @@ display(df)
 # MAGIC FROM JSON.`dbfs:/FileStore/streaming/schemaInfer/_schemas/0`
 
 # COMMAND ----------
-
-

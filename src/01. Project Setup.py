@@ -3,47 +3,59 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text(name="env",defaultValue="",label=" Enter the environment in lower case")
+dbutils.widgets.text(
+    name="env", defaultValue="", label=" Enter the environment in lower case"
+)
 env = dbutils.widgets.get("env")
 
 # COMMAND ----------
 
-def create_Bronze_Schema(environment,path):
-    print(f'Using {environment}_catalog ')
+
+def create_Bronze_Schema(environment, path):
+    print(f"Using {environment}_catalog ")
     spark.sql(f""" USE CATALOG '{environment}_Catalog'""")
-    print(f'Creating Bronze Schema in {environment}_catalog')
-    spark.sql(f"""CREATE SCHEMA IF NOT EXISTS `bronze` MANAGED LOCATION '{path}/bronze'""")
+    print(f"Creating Bronze Schema in {environment}_catalog")
+    spark.sql(
+        f"""CREATE SCHEMA IF NOT EXISTS `bronze` MANAGED LOCATION '{path}/bronze'"""
+    )
     print("************************************")
+
 
 # COMMAND ----------
 
-def create_Silver_Schema(environment,path):
-    print(f'Using {environment}_Catalog ')
+
+def create_Silver_Schema(environment, path):
+    print(f"Using {environment}_Catalog ")
     spark.sql(f""" USE CATALOG '{environment}_catalog'""")
-    print(f'Creating Silver Schema in {environment}_Catalog')
-    spark.sql(f"""CREATE SCHEMA IF NOT EXISTS `silver` MANAGED LOCATION '{path}/silver'""")
+    print(f"Creating Silver Schema in {environment}_Catalog")
+    spark.sql(
+        f"""CREATE SCHEMA IF NOT EXISTS `silver` MANAGED LOCATION '{path}/silver'"""
+    )
     print("************************************")
+
 
 # COMMAND ----------
 
-def create_Gold_Schema(environment,path):
-    print(f'Using {environment}_Catalog ')
+
+def create_Gold_Schema(environment, path):
+    print(f"Using {environment}_Catalog ")
     spark.sql(f""" USE CATALOG '{environment}_catalog'""")
-    print(f'Creating Gold Schema in {environment}_Catalog')
+    print(f"Creating Gold Schema in {environment}_Catalog")
     spark.sql(f"""CREATE SCHEMA IF NOT EXISTS `gold` MANAGED LOCATION '{path}/gold'""")
     print("************************************")
 
-# COMMAND ----------
-
-create_Bronze_Schema(env,bronze)
 
 # COMMAND ----------
 
-create_Silver_Schema(env,silver)
+create_Bronze_Schema(env, bronze)
 
 # COMMAND ----------
 
-create_Gold_Schema(env,gold)
+create_Silver_Schema(env, silver)
+
+# COMMAND ----------
+
+create_Gold_Schema(env, gold)
 
 # COMMAND ----------
 
@@ -59,8 +71,9 @@ create_Gold_Schema(env,gold)
 
 # COMMAND ----------
 
+
 def createTable_rawTraffic(environment):
-    print(f'Creating raw_Traffic table in {environment}_catalog')
+    print(f"Creating raw_Traffic table in {environment}_catalog")
     spark.sql(f"""CREATE TABLE IF NOT EXISTS `{environment}_catalog`.`bronze`.`raw_traffic`
                         (
                             Record_ID INT,
@@ -89,8 +102,9 @@ def createTable_rawTraffic(environment):
                             EV_Bike INT,
                             Extract_Time TIMESTAMP
                     );""")
-    
+
     print("************************************")
+
 
 # COMMAND ----------
 
@@ -100,8 +114,9 @@ def createTable_rawTraffic(environment):
 
 # COMMAND ----------
 
+
 def createTable_rawRoad(environment):
-    print(f'Creating raw_roads table in {environment}_catalog')
+    print(f"Creating raw_roads table in {environment}_catalog")
     spark.sql(f"""CREATE TABLE IF NOT EXISTS `{environment}_catalog`.`bronze`.`raw_roads`
                         (
                             Road_ID INT,
@@ -113,8 +128,9 @@ def createTable_rawRoad(environment):
                             Total_Link_Length_Miles DOUBLE,
                             All_Motor_Vehicles DOUBLE
                     );""")
-    
+
     print("************************************")
+
 
 # COMMAND ----------
 
@@ -124,10 +140,10 @@ def createTable_rawRoad(environment):
 
 # COMMAND ----------
 
-create_Bronze_Schema(env,bronze)
+create_Bronze_Schema(env, bronze)
 createTable_rawTraffic(env)
 createTable_rawRoad(env)
 
 
-create_Silver_Schema(env,silver)
-create_Gold_Schema(env,gold)
+create_Silver_Schema(env, silver)
+create_Gold_Schema(env, gold)
