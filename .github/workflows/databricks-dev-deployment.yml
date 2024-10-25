@@ -37,6 +37,11 @@ jobs:
       # See https://github.com/databricks/setup-cli
       - uses: databricks/setup-cli@main
 
+      - name: Set environment variables
+        run: |
+          export BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}
+          export BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }}
+
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
       - run: databricks bundle deploy

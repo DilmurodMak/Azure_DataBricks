@@ -6,7 +6,7 @@ resources:
       trigger:
         pause_status: UNPAUSED
         file_arrival:
-          url: ${{ vars.FILE_LANDING_DEV }}
+          url: ${ var.FILE_LANDING_DEV }
       tasks:
         - task_key: load_to_bronze
           notebook_task:
