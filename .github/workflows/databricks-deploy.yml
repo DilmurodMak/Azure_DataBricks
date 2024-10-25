@@ -1,14 +1,17 @@
-name: Pull Request CI Workflow with uv, Python 3.11, and Ruff Linting
+name: CI Workflow with uv, Python 3.11, and Ruff Linting
+run-name: Linting and Testing Datarbicks Source Code by @${{ github.actor }}
 
 on:
-  pull_request:
-    types: [opened]
-    branches:
-      - main
-
   push:
     branches:
       - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+    paths:  
+      - 'src/**'
+      - 'tests/**'
 
 env:
   UV_VERSION: ">=0.4.26"
@@ -26,8 +29,7 @@ jobs:
         with:
           enable-cache: true
           version: ${{ env.UV_VERSION }}
-          cache-dependency-glob: |
-            "**/requirements**.txt"
+          cache-dependency-glob: "**/requirements**.txt"
 
       - name: Install Python
         uses: actions/setup-python@v5
