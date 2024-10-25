@@ -15,15 +15,13 @@ on:
 
 env:
   UV_VERSION: ">=0.4.26"
+  PYTHON_VERSION: "3.11"
 
 
 
 jobs:
   linting-testing:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.11]
 
     steps:
       - name: Checkout the repository
@@ -36,12 +34,13 @@ jobs:
           version: ${{ env.UV_VERSION }}
           cache-dependency-glob: "**/requirements**.txt"
 
-      - name: Install Python
-        run: uv python install ${{ matrix.python-version }}
+      - name: Install Python and Ruff
+        run: | 
+          uv python install ${{ env.PYTHON_VERSION }}
+          uv tool install ruff
       
       - name: Run Ruff Lint
         run: |
-          uv add ruff
           uv run ruff check
         
       - name: Run tests
