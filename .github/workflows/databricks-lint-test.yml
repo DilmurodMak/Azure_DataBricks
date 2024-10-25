@@ -11,6 +11,8 @@ on:
     paths:  
       - 'src/**'
       - 'tests/**'
+      - 'resources/**'
+      - 'Infra/**'
 
 env:
   UV_VERSION: ">=0.4.26"
