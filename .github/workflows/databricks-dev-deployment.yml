@@ -38,7 +38,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
+          echo "BUNDLE_VAR_ADB_HOST_DEV_URL=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
           echo "BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }} " >> $GITHUB_ENV
 
       # Deploy the bundle to the "dev" target as defined
