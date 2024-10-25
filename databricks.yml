@@ -10,11 +10,11 @@ include:
 variables:
   ADB_HOST_DEV:
     description: "The host of the Databricks workspace for the dev environment."
-    type: string
+    type: complex
 
   FILE_LANDING_DEV:
     description: "The path to the file landing location for the dev environment."
-    type: string
+    type: complex
 
 
 targets:
