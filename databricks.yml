@@ -15,16 +15,16 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
+      host: ${{ vars.ADB_HOST_DEV }}
 
-  prod:
-    mode: staging
-    workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
-      # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
-    permissions:
-      - user_name: admin@mngenvmcap289075.onmicrosoft.com
-        level: CAN_MANAGE
-    run_as:
-      user_name: admin@mngenvmcap289075.onmicrosoft.com
+  # stg:
+  #   mode: staging
+  #   workspace:
+  #     host: https://adb-905511363347848.8.azuredatabricks.net
+  #     # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
+  #     root_path: /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+  #   permissions:
+  #     - user_name: admin@mngenvmcap289075.onmicrosoft.com
+  #       level: CAN_MANAGE
+  #   run_as:
+  #     user_name: admin@mngenvmcap289075.onmicrosoft.com

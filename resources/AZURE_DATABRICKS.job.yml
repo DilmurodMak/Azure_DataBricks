@@ -6,7 +6,7 @@ resources:
       trigger:
         pause_status: UNPAUSED
         file_arrival:
-          url: abfss://landing@databricksstdev2.dfs.core.windows.net/raw_traffic/
+          url: ${{ vars.FILE_LANDING_DEV }}
       tasks:
         - task_key: load_to_bronze
           notebook_task:
