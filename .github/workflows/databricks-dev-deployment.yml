@@ -36,21 +36,22 @@ jobs:
       # See https://github.com/databricks/setup-cli
       - uses: databricks/setup-cli@main
 
-      - name: Set environment variables
-        run: |
-          echo "BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
-          echo "BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }} " >> $GITHUB_ENV
+    #   - name: Set environment variables
+    #     run: |
+    #       echo "BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
+    #       echo "BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }} " >> $GITHUB_ENV
 
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
       - run: |
-            echo $BUNDLE_VAR_ADB_HOST_DEV 
-            echo $BUNDLE_VAR_FILE_LANDING_DEV
             databricks bundle deploy
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
+          BUNDLE_VAR_DATABRICKS_HOST: ${{ vars.ADB_HOST_DEV }}
+          BUNDLE_VAR_FILE_LANDING_DEV: ${{ vars.FILE_LANDING_DEV_URL }}
+          
 
 #   # Validate, deploy, and then run the bundle.
 #   pipeline_update:

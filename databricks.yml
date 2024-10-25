@@ -7,6 +7,16 @@ include:
   - resources/*.yml
 
 
+variables:
+  ADB_HOST_DEV:
+    description: "The host of the Databricks workspace for the dev environment."
+    type: string
+
+  FILE_LANDING_DEV:
+    description: "The path to the file landing location for the dev environment."
+    type: string
+
+
 targets:
   dev:
     # The default target uses 'mode: development' to create a development copy.
@@ -16,7 +26,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ${ var.ADB_HOST_DEV }
+      host: ${var.ADB_HOST_DEV}
 
   # stg:
   #   mode: staging
