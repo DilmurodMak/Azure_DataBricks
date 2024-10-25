@@ -81,5 +81,4 @@ docstring-code-line-length = "dynamic"
 
 [lint.per-file-ignores]
 "__init__.py" = ["E402"]
-"**/{tests,docs,tools}/*" = ["E402"]
 "*.py" = ["F821"]
