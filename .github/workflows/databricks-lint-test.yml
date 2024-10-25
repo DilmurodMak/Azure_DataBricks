@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - feature/**
   pull_request:
     branches:
       - main
@@ -16,8 +15,6 @@ on:
 env:
   UV_VERSION: ">=0.4.26"
   PYTHON_VERSION: "3.11"
-
-
 
 jobs:
   linting-testing:
