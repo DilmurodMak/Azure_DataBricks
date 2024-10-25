@@ -31,7 +31,6 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          enable-AzPSSession: true
 
       # Download the Databricks CLI.
       # See https://github.com/databricks/setup-cli
@@ -39,8 +38,8 @@ jobs:
 
       - name: Set environment variables
         run: |
-          export BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}
-          export BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }}
+          echo "BUNDLE_VAR_ADB_HOST_DEV=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
+          echo "BUNDLE_VAR_FILE_LANDING_DEV=${{ vars.FILE_LANDING_DEV_URL }} " >> $GITHUB_ENV
 
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
