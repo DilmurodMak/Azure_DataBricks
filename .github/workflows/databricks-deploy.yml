@@ -34,15 +34,16 @@ jobs:
           version: ${{ env.UV_VERSION }}
           cache-dependency-glob: "**/requirements**.txt"
 
-      - name: Install Python and Ruff
+      - name: Install Python and Dependencies
         run: | 
           uv python install ${{ env.PYTHON_VERSION }}
-          uv tool install ruff
+          uv tool install ruff pytest
       
       - name: Run Ruff Lint
         run: |
           uv run ruff check
         
       - name: Run tests
-        run: uv run pytest
+        run: |
+          uv run pytest
       
