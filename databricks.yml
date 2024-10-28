@@ -27,6 +27,8 @@ targets:
     default: true
     workspace:
       host: https://adb-905511363347848.8.azuredatabricks.net
+    run_as:
+      user_name: 3b881c81-408d-43c1-98cf-d9717f0f253b
   
   # stg:
   #   workspace:
