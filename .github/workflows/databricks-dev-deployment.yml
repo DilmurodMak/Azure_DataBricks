@@ -10,6 +10,7 @@ on:
       branches:
         - main
 
+
 jobs:
   # Used by the "pipeline_update" job to deploy the bundle.
   # Bundle validation is automatically performed as part of this deployment.
@@ -18,10 +19,6 @@ jobs:
     name: "Deploy bundle"
     runs-on: ubuntu-latest
     environment: development
-
-    outputs:
-      ADB_HOST: ${{ vars.ADB_HOST }}
-      FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
     steps:
       # Check out this repo, so that this workflow can access it.
@@ -46,5 +43,5 @@ jobs:
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
           DATABRICKS_BUNDLE_ENV: dev
-          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST }}
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
