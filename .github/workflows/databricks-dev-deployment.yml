@@ -76,7 +76,7 @@ jobs:
       - uses: databricks/setup-cli@main
 
       # Run the Databricks workflow named 
-      - run: databricks bundle run dev_adb_dev_sp_ETL_Flow --refresh-all
+      - run: databricks bundle run -t dev dev_adb_dev_sp_ETL_Flow
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
