@@ -64,7 +64,7 @@ jobs:
     steps:
       # Check out this repo, so that this workflow can access it.
       - uses: actions/checkout@v4
-      
+
       # Login to Azure Portal Using Service Principal
       - name: Azure Login action
         uses: azure/login@v2
@@ -75,7 +75,7 @@ jobs:
       - uses: databricks/setup-cli@main
 
       # Run the Databricks workflow named 
-      - run: databricks bundle run ${{env.BUNDLE_ENV}}_sp_dev_sp_ETL_Flow --refresh-all
+      - run: databricks bundle run dev_sp_dev_sp_ETL_Flow --refresh-all
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
