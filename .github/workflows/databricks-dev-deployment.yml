@@ -10,7 +10,6 @@ on:
       branches:
         - main
 
-
 jobs:
   # Used by the "pipeline_update" job to deploy the bundle.
   # Bundle validation is automatically performed as part of this deployment.
