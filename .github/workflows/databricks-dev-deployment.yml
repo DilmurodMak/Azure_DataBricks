@@ -45,6 +45,6 @@ jobs:
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
-          DATABRICKS_BUNDLE_ENV: ${{ job.environment.name }}
+          DATABRICKS_BUNDLE_ENV: dev
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
