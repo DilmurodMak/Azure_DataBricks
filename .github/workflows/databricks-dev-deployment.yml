@@ -1,0 +1,86 @@
+name: "Dev Deployment"
+
+concurrency: 1
+
+on:
+    pull_request:
+      types:
+        - opened
+        - synchronize
+      branches:
+        - main
+    
+env:
+    BUNDLE_ENV: dev
+
+jobs:
+  # Used by the "pipeline_update" job to deploy the bundle.
+  # Bundle validation is automatically performed as part of this deployment.
+  # If validation fails, this workflow fails.
+  deploy:
+    name: "Deploy bundle"
+    runs-on: ubuntu-latest
+    environment: development
+
+    outputs:
+      ADB_HOST_DEV_URL: ${{ vars.ADB_HOST_DEV }}
+      FILE_LANDING_DEV_URL: ${{ vars.FILE_LANDING_DEV_URL }}
+
+    steps:
+      # Check out this repo, so that this workflow can access it.
+      - uses: actions/checkout@v4
+
+      # Login to Azure Portal Using Service Principal
+      - name: Azure Login action
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Download the Databricks CLI.
+      - uses: databricks/setup-cli@main
+
+
+      # Deploy the bundle to the "dev" target as defined
+      # in the bundle's settings file.
+      - run: |
+            databricks bundle validate
+            databricks bundle deploy
+        working-directory: .
+        env:
+          DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
+          DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
+          BUNDLE_VAR_ADB_HOST_DEV_URL: ${{ vars.ADB_HOST_DEV }}
+          BUNDLE_VAR_FILE_LANDING_DEV_URL: ${{ vars.FILE_LANDING_DEV_URL }}
+
+
+#   # Validate, deploy, and then run the bundle.
+#   pipeline_update:
+#     name: "Run pipeline update"
+#     runs-on: ubuntu-latest
+#     environment: development
+
+#     # Run the "deploy" job first.
+#     needs:
+#       - deploy
+
+#     steps:
+#       # Check out this repo, so that this workflow can access it.
+#       - uses: actions/checkout@v4
+
+#       # Login to Azure Portal Using Service Principal
+#       - name: Azure Login action
+#         uses: azure/login@v2
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#       # Use the downloaded Databricks CLI.
+#       - uses: databricks/setup-cli@main
+
+#       # Run the Databricks workflow named 
+#       - run: databricks bundle run -t dev dev_adb_dev_sp_ETL_Flow
+#         working-directory: .
+#         env:
+#           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
+#           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
+#           BUNDLE_VAR_ADB_HOST_DEV_URL: ${{ needs.deploy.outputs.ADB_HOST_DEV_URL }}
+#           BUNDLE_VAR_FILE_LANDING_DEV_URL: ${{ needs.deploy.outputs.FILE_LANDING_DEV_URL }}

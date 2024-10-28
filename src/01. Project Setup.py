@@ -4,7 +4,7 @@
 # COMMAND ----------
 
 dbutils.widgets.text(
-    name="env", defaultValue="", label=" Enter the environment in lower case"
+    name="env", defaultValue="", label="Enter the environment in lower case"
 )
 env = dbutils.widgets.get("env")
 

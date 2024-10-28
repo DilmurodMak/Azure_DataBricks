@@ -6,6 +6,17 @@ bundle:
 include:
   - resources/*.yml
 
+
+variables:
+  ADB_HOST_DEV_URL:
+    description: "The host of the Databricks workspace for the dev environment."
+    type: string
+
+  FILE_LANDING_DEV_URL:
+    description: "The path to the file landing location for the dev environment."
+    type: string
+
+
 targets:
   dev:
     # The default target uses 'mode: development' to create a development copy.
@@ -16,15 +27,16 @@ targets:
     default: true
     workspace:
       host: https://adb-905511363347848.8.azuredatabricks.net
+  
+  # stg:
+  #   mode: staging
+  #   workspace:
+  #     host: https://adb-905511363347848.8.azuredatabricks.net
+  #     # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
+  #     root_path: /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+  #   permissions:
+  #     - user_name: admin@mngenvmcap289075.onmicrosoft.com
+  #       level: CAN_MANAGE
+  #   run_as:
+  #     user_name: admin@mngenvmcap289075.onmicrosoft.com
 
-  prod:
-    mode: staging
-    workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
-      # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
-    permissions:
-      - user_name: admin@mngenvmcap289075.onmicrosoft.com
-        level: CAN_MANAGE
-    run_as:
-      user_name: admin@mngenvmcap289075.onmicrosoft.com
