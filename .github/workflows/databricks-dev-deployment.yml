@@ -22,6 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
 
+    outputs:
+      ADB_HOST_DEV_URL: ${{ vars.ADB_HOST_DEV }}
+      FILE_LANDING_DEV_URL: ${{ vars.FILE_LANDING_DEV_URL }}
+
     steps:
       # Check out this repo, so that this workflow can access it.
       - uses: actions/checkout@v4
@@ -35,10 +39,6 @@ jobs:
       # Download the Databricks CLI.
       - uses: databricks/setup-cli@main
 
-      - name: Set environment variables
-        run: |
-          echo "BUNDLE_VAR_ADB_HOST_DEV_URL=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
-          echo "BUNDLE_VAR_FILE_LANDING_DEV_URL=${{ vars.FILE_LANDING_DEV_URL }}" >> $GITHUB_ENV
 
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
@@ -49,6 +49,8 @@ jobs:
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
+          BUNDLE_VAR_ADB_HOST_DEV_URL: ${{ vars.ADB_HOST_DEV }}
+          BUNDLE_VAR_FILE_LANDING_DEV_URL: ${{ vars.FILE_LANDING_DEV_URL }}
 
 
   # Validate, deploy, and then run the bundle.
@@ -80,3 +82,5 @@ jobs:
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
+          BUNDLE_VAR_ADB_HOST_DEV_URL: ${{ needs.deploy.outputs.ADB_HOST_DEV_URL }}
+          BUNDLE_VAR_FILE_LANDING_DEV_URL: ${{ needs.deploy.outputs.FILE_LANDING_DEV_URL }}
