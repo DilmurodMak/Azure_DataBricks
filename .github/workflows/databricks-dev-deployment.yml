@@ -64,6 +64,12 @@ jobs:
     steps:
       # Check out this repo, so that this workflow can access it.
       - uses: actions/checkout@v4
+      
+      # Login to Azure Portal Using Service Principal
+      - name: Azure Login action
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Use the downloaded Databricks CLI.
       - uses: databricks/setup-cli@main
