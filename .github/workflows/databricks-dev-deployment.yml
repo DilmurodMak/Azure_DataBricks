@@ -39,7 +39,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "BUNDLE_VAR_ADB_HOST_DEV_URL=${{ vars.ADB_HOST_DEV }}" >> $GITHUB_ENV
-          echo "BUNDLE_VAR_FILE_LANDING_DEV_URL=${{ vars.FILE_LANDING_DEV_URL }}" >> $GITHUB_ENV
+          echo "BUNDLE_VAR_FILE_LANDING_DEV_URL=${{ vars.FILE_LANDING_DEV_URL }}" >> $GITHUB_ENV"
 
       # Deploy the bundle to the "dev" target as defined
       # in the bundle's settings file.
@@ -76,7 +76,7 @@ jobs:
       - uses: databricks/setup-cli@main
 
       # Run the Databricks workflow named 
-      - run: databricks bundle run ${{env.BUNDLE_ENV}}_adb_dev_sp_ETL_Flow --refresh-all
+      - run: databricks bundle run dev_adb_dev_sp_ETL_Flow --refresh-all
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
