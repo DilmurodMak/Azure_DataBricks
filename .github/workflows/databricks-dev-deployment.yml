@@ -51,12 +51,6 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
           DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
 
-      # Run the Databricks workflow named 
-      - run: databricks bundle run ${{env.BUNDLE_ENV}}_sp_dev_sp_ETL_Flow --refresh-all
-        working-directory: .
-        env:
-          DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
-          DATABRICKS_BUNDLE_ENV: ${{ env.BUNDLE_ENV }}
 
   # Validate, deploy, and then run the bundle.
   pipeline_update:
@@ -82,7 +76,7 @@ jobs:
       - uses: databricks/setup-cli@main
 
       # Run the Databricks workflow named 
-      - run: databricks bundle run ${{env.BUNDLE_ENV}}_sp_dev_sp_ETL_Flow --refresh-all
+      - run: databricks bundle run ${{env.BUNDLE_ENV}}_adb_dev_sp_ETL_Flow --refresh-all
         working-directory: .
         env:
           DATABRICKS_TOKEN: ${{ secrets.ADB_DEV_TOKEN }}
