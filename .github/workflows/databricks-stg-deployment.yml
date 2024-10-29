@@ -27,13 +27,6 @@ jobs:
       # Download the Databricks CLI
       - uses: databricks/setup-cli@main
 
-      # Approval step for deploying to staging
-      - name: 'Wait for approval'
-        if: github.ref == 'refs/heads/main'
-        uses: actions/pause@v1
-        with:
-          message: 'Approve to continue deployment to staging'
-
       # Deploy the bundle to the "staging" target
       - name: Deploy Databricks Bundle
         run: |
