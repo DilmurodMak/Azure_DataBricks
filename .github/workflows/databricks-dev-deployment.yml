@@ -3,12 +3,9 @@ name: "Dev Deployment"
 concurrency: 1
 
 on:
-    pull_request:
-      types:
-        - opened
-        - synchronize
-      branches:
-        - main
+  push:
+    branches:
+      - main
 env:
   ENV: dev
 
