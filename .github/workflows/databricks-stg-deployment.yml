@@ -1,0 +1,46 @@
+name: "Staging Deployment"
+
+concurrency: 1
+
+on:
+  workflow_run:
+    workflows: ["CI Linting, Testing", "Dev Deployment"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: "Deploy to Staging"
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      # Check out this repo
+      - uses: actions/checkout@v4
+
+      # Login to Azure Portal Using Service Principal
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_STAGING_CREDENTIALS }}
+
+      # Download the Databricks CLI
+      - uses: databricks/setup-cli@main
+
+      # Approval step for deploying to staging
+      - name: 'Wait for approval'
+        if: github.ref == 'refs/heads/main'
+        uses: actions/pause@v1
+        with:
+          message: 'Approve to continue deployment to staging'
+
+      # Deploy the bundle to the "staging" target
+      - name: Deploy Databricks Bundle
+        run: |
+          databricks bundle validate -t stg
+          databricks bundle deploy -t stg
+        working-directory: .
+        env:
+          DATABRICKS_BUNDLE_ENV: staging
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
