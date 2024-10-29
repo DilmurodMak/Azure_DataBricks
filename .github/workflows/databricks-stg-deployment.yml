@@ -30,7 +30,7 @@ jobs:
       # Download the Databricks CLI
       - uses: databricks/setup-cli@main
 
-      # Deploy the bundle to the "staging" target
+      # Deploy the bundle to the "stg" target
       - name: Deploy Databricks Bundle
         run: |
           databricks bundle validate -t ${{ env.ENV }}
