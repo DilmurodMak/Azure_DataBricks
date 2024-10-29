@@ -200,19 +200,3 @@ df_final = create_TransformedTime(df_motor)
 ## Writing to silver_traffic
 
 write_Traffic_SilverTable(df_final, env)
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC SELECT COUNT(*) FROM `dev_catalog`.`silver`.`silver_traffic`
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC SELECT * FROM `dev_catalog`.`silver`.`silver_traffic`
-# MAGIC WHERE Record_ID BETWEEN '37086' and '37096'
-# MAGIC ORDER BY Record_ID
-
-# COMMAND ----------
