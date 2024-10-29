@@ -10,9 +10,6 @@ on:
 env:
   ENV: dev
 
-permissions:
-  id-token: write
-
 jobs:
   # Used by the "pipeline_update" job to deploy the bundle.
   # Bundle validation is automatically performed as part of this deployment.
@@ -27,12 +24,10 @@ jobs:
       - uses: actions/checkout@v4
 
       # Login to Azure Portal Using Service Principal
-      - name: "Azure Login action with OIDC"
+      - name: Azure Login action
         uses: azure/login@v2
         with:
-         client-id: ${{ vars.AZURE_CLIENT_ID }}
-         tenant-id: ${{ vars.AZURE_TENANT_ID }}
-         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
 
       # Download the Databricks CLI.
       - uses: databricks/setup-cli@main
