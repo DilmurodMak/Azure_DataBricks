@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - feature/*
 env:
   ENV: dev
 
@@ -26,7 +27,11 @@ jobs:
       - name: Azure Login action
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
+         auth-type: IDENTITY
+         client-id: ${{ vars.AZURE_CLIENT_ID }}
+         tenant-id: ${{ vars.AZURE_TENANT_ID }}
+         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+         enable-AzPSSession: true
 
       # Download the Databricks CLI.
       - uses: databricks/setup-cli@main
