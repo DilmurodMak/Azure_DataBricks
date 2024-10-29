@@ -16,6 +16,10 @@ variables:
     description: "The path to the file landing location for the dev environment."
     type: string
 
+  ENV_TAG:
+    description: "The environment tag for the deployment."
+    type: string
+
 
 targets:
   dev:

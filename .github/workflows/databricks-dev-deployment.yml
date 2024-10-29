@@ -9,6 +9,8 @@ on:
         - synchronize
       branches:
         - main
+env:
+  ENV: dev
 
 jobs:
   # Used by the "pipeline_update" job to deploy the bundle.
@@ -40,6 +42,6 @@ jobs:
             databricks bundle deploy
         working-directory: .
         env:
-          DATABRICKS_BUNDLE_ENV: dev
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}

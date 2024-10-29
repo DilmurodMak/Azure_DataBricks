@@ -12,7 +12,7 @@ resources:
           notebook_task:
             notebook_path: src/02. Load to bronze
             base_parameters:
-              env: dev
+              env: ${bundle.target}
             source: GIT
         - task_key: silver_traffic
           depends_on:
@@ -20,7 +20,7 @@ resources:
           notebook_task:
             notebook_path: src/03. Silver - Traffic Transformations
             base_parameters:
-              env: dev
+              env: ${bundle.target}
             source: GIT
         - task_key: silver_roads
           depends_on:
@@ -28,7 +28,7 @@ resources:
           notebook_task:
             notebook_path: src/05. Silver - Roads Transformation
             base_parameters:
-              env: dev
+              env: ${bundle.target}
             source: GIT
         - task_key: gold
           depends_on:
@@ -36,7 +36,7 @@ resources:
           notebook_task:
             notebook_path: src/06. Gold - Final Transformations and loading
             base_parameters:
-              env: dev
+              env: ${bundle.target}
             source: GIT
       git_source:
         git_url: https://github.com/DilmurodMak/Azure_DataBricks/

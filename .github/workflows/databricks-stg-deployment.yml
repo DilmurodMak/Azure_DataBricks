@@ -4,9 +4,12 @@ concurrency: 1
 
 on:
   workflow_run:
-    workflows: ["CI Linting, Testing", "Dev Deployment"]
+    workflows: ["Dev Deployment"]
     types:
       - completed
+
+env:
+  ENV: stg
 
 jobs:
   deploy:
@@ -30,10 +33,10 @@ jobs:
       # Deploy the bundle to the "staging" target
       - name: Deploy Databricks Bundle
         run: |
-          databricks bundle validate -t stg
-          databricks bundle deploy -t stg
+          databricks bundle validate -t ${{ env.ENV }}
+          databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
-          DATABRICKS_BUNDLE_ENV: staging
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
