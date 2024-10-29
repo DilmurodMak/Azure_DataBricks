@@ -44,6 +44,6 @@ jobs:
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
-          BUNDLE_VAR_ENV: ${{ env.ENV_TAG }}
+          BUNDLE_VAR_ENV_TAG: ${{ env.ENV_TAG }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
