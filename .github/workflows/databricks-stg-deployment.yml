@@ -4,7 +4,7 @@ concurrency: 1
 
 on:
   workflow_run:
-    workflows: ["CI Linting, Testing", "Dev Deployment"]
+    workflows: ["Dev Deployment"]
     types:
       - completed
 
