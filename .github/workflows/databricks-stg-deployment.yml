@@ -9,8 +9,7 @@ on:
       - completed
 
 env:
-  ENV_TAG: stg
-  ENV: staging
+  ENV: stg
 
 jobs:
   deploy:
@@ -34,11 +33,10 @@ jobs:
       # Deploy the bundle to the "staging" target
       - name: Deploy Databricks Bundle
         run: |
-          databricks bundle validate -t stg
-          databricks bundle deploy -t stg
+          databricks bundle validate -t ${{ env.ENV }}
+          databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
-          BUBDLE_VAR_ENV_TAG: ${{ env.ENV_TAG }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
