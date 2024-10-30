@@ -1,8 +1,0 @@
-# account id can be found at https://accounts.azuredatabricks.net/
-account_id             = ""
-
-# databricks_resource_id can be found at JSON view of databricks workspace in Azure portal
-databricks_resource_id = ""
-
-# List of AAD groups that you want to add to Databricks account
-aad_groups             = ["account_unity_admin", "data_engineer", "data_analyst", "data_scientist"]
