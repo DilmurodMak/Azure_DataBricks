@@ -15,7 +15,7 @@ variable "aad_groups" {
 }
 
 variable "metastore_name"{
-  default = "metastore_azure_westus2"
+  default = "metastore_azure_development"
 }
 
 variable "account_id" {
