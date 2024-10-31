@@ -24,8 +24,8 @@ targets:
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     mode: development
     default: true
-    workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
+    # workspace:
+    #   host: https://adb-905511363347848.8.azuredatabricks.net
   
   stg:
     presets:

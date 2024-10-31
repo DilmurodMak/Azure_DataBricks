@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - feature/*
 env:
   ENV: dev
 
@@ -36,7 +37,7 @@ jobs:
       # in the bundle's settings file.
       - run: |
             databricks bundle validate
-            databricks bundle deploy
+            databricks bundle deploy -t dev --host-url ${{ vars.ADB_HOST_URL }}
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
