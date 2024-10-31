@@ -25,7 +25,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ${ADB_HOST_URL}
+      host: https://adb-905511363347848.8.azuredatabricks.net
       root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
   
   stg:
