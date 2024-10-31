@@ -22,10 +22,6 @@ output "azurerm_databricks_access_connector_id" {
   value = azurerm_databricks_access_connector.unity.id
 }
 
-output "metastore_id" {
+output "metastore_id"{
   value = databricks_metastore.this.id
-}
-
-output "databricks_workspace_id" {
-  value = local.databricks_workspace_id
 }
