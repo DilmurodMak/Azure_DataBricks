@@ -10,7 +10,7 @@ resource "azurerm_databricks_access_connector" "unity" {
 
 // Create a storage account to be used by unity catalog metastore as root storage
 resource "azurerm_storage_account" "unity_catalog" {
-  name                     = "${var.prefix}sa"
+  name                     = "${var.prefix}sa${var.environment}"
   resource_group_name      = var.resource_group
   location                 = var.region
   account_tier             = "Standard"
@@ -44,11 +44,26 @@ resource "databricks_metastore" "this" {
   azurerm_storage_account.unity_catalog.name)
   force_destroy = true
   owner         = "account_unity_admin"
+
+  provisioner "local-exec" {
+    command = <<EOT
+      for i in {1..10}; do
+        if databricks metastore list | grep -q "${self.id}"; then
+          echo "Metastore is ready."
+          exit 0
+        fi
+        echo "Waiting for metastore to be ready..."
+        sleep 10
+      done
+      echo "Timed out waiting for metastore."
+      exit 1
+    EOT
+  }
 }
 
 
 // Assign managed identity to metastore, 
-//I needed to run terraform second time to the id. Its taking time for its creation 
+//I needed to run terraform second time to get the metastore_id. Its taking time for its creation 
 resource "databricks_metastore_data_access" "first" {
   metastore_id = databricks_metastore.this.id
   name         = "the-metastore-key"
