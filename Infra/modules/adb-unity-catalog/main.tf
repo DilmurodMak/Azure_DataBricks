@@ -104,13 +104,7 @@ resource "databricks_grants" "environment_catalog" {
 }
 
 # Create schemas explicitly for each data layer
-resource "databricks_schema" "landing_schema" {
-  catalog_name = databricks_catalog.environment.id
-  name         = local.data_layers[0].name
-  owner        = "account_unity_admin"
-  comment      = "Schema for landing layer in ${local.catalog_name}"
-}
-
+# Bronze, Silver, Gold
 resource "databricks_schema" "bronze_schema" {
   catalog_name = databricks_catalog.environment.id
   name         = local.data_layers[1].name
@@ -133,21 +127,7 @@ resource "databricks_schema" "gold_schema" {
 }
 
 # Grant permissions on each schema
-resource "databricks_grants" "landing_schema_permissions" {
-  schema = databricks_schema.landing_schema.id
-
-  # Standard grants for landing schema
-  grant {
-    principal  = "data_engineer"
-    privileges = ["USE_SCHEMA", "CREATE_FUNCTION", "CREATE_TABLE", "EXECUTE", "MODIFY", "SELECT"]
-  }
-
-  grant {
-    principal  = "data_scientist"
-    privileges = ["USE_SCHEMA", "SELECT"]
-  }
-}
-
+# Bronze SIlver Gold
 resource "databricks_grants" "bronze_schema_permissions" {
   schema = databricks_schema.bronze_schema.id
 

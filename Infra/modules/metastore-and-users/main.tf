@@ -48,7 +48,7 @@ resource "databricks_metastore" "this" {
   provisioner "local-exec" {
     command = <<EOT
       for i in {1..10}; do
-        if databricks metastore list | grep -q "${self.id}"; then
+        if databricks metastores list | jq -e '.metastores[] | select(.metastore_id == "${databricks_metastore.this.id}")' > /dev/null; then
           echo "Metastore is ready."
           exit 0
         fi
@@ -58,12 +58,11 @@ resource "databricks_metastore" "this" {
       echo "Timed out waiting for metastore."
       exit 1
     EOT
+    interpreter = ["/bin/bash"]
   }
 }
 
-
 // Assign managed identity to metastore, 
-//I needed to run terraform second time to get the metastore_id. Its taking time for its creation 
 resource "databricks_metastore_data_access" "first" {
   metastore_id = databricks_metastore.this.id
   name         = "the-metastore-key"
