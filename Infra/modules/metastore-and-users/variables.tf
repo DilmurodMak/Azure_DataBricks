@@ -5,9 +5,15 @@ variable "environment" {
   description = "The environment to deploy (dev, stg, prod)"
   type        = string
 }
+
+variable "subscription_id" {
+  description = "Azure subscription id"
+}
+
 variable "resource_group" {
   description = "Azure resource group"
 }
+
 variable "region" {
   description = "Azure region"
   type        = string

@@ -33,7 +33,8 @@ resource "azurerm_role_assignment" "mi_data_contributor" {
 }
 
 // Create the first unity catalog metastore
-// this caused and error due to only one metastore can be created per workspace, 
+// This throws an error because there will be metasotre created in that region during workspace creation
+// Only one metastore can be created in a region
 // I deleted the existing one at https://accounts.azuredatabricks.net/ workspaces
 // I had to delete the existing one rerun this script
 resource "databricks_metastore" "this" {
@@ -47,7 +48,7 @@ resource "databricks_metastore" "this" {
 
 
 // Assign managed identity to metastore, 
-//I needed to comment out second time due to it exist after first run
+//I needed to run terraform second time to the id. Its taking time for its creation 
 resource "databricks_metastore_data_access" "first" {
   metastore_id = databricks_metastore.this.id
   name         = "the-metastore-key"

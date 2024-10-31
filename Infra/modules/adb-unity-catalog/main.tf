@@ -1,17 +1,17 @@
 # // Put users and service principals to their respective groups
-# resource "databricks_group_member" "this" {
-#   provider = databricks.azure_account
-#   for_each = toset(flatten([
-#     for group, details in data.azuread_group.this : [
-#       for member in details["members"] : jsonencode({
-#         group  = var.databricks_groups[details["object_id"]],
-#         member = local.merged_user_sp[member]
-#       })
-#     ]
-#   ]))
-#   group_id   = jsondecode(each.value).group
-#   member_id  = jsondecode(each.value).member
-# }
+resource "databricks_group_member" "this" {
+  provider = databricks.azure_account
+  for_each = toset(flatten([
+    for group, details in data.azuread_group.this : [
+      for member in details["members"] : jsonencode({
+        group  = var.databricks_groups[details["object_id"]],
+        member = local.merged_user_sp[member]
+      })
+    ]
+  ]))
+  group_id   = jsondecode(each.value).group
+  member_id  = jsondecode(each.value).member
+}
 
 // Identity federation - adding users/groups from Databricks account to workspace
 resource "databricks_mws_permission_assignment" "workspace_user_groups" {
@@ -20,7 +20,7 @@ resource "databricks_mws_permission_assignment" "workspace_user_groups" {
   workspace_id = var.databricks_workspace_id
   principal_id = var.databricks_groups[each.value["object_id"]]
   permissions  = each.key == "account_unity_admin" ? ["ADMIN"] : ["USER"]
-  # depends_on   = [databricks_group_member.this]
+  depends_on   = [databricks_group_member.this]
 }
 
 // Create storage credentials, external locations, catalogs, schemas, and grants
@@ -40,13 +40,13 @@ resource "databricks_storage_credential" "external_mi" {
   }
   owner      = "account_unity_admin"
   comment    = "Storage credential for all external locations"
-  # depends_on = [databricks_mws_permission_assignment.workspace_user_groups]
+  depends_on = [databricks_mws_permission_assignment.workspace_user_groups]
 }
 
 // Create external location to be used as root storage by the environment catalog
 resource "databricks_external_location" "environment_location" {
   name            = local.external_location_name
-  url             = format("abfss://%s@%s.dfs.core.windows.net",
+  url             = format("abfss://%s@%s.dfs.core.windows.net/",
         azurerm_storage_container.environment_catalog.name,
         var.azurerm_storage_account_unity_catalog.name)
   credential_name = databricks_storage_credential.external_mi.id

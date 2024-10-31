@@ -1,6 +1,11 @@
 variable "account_id" {
   description = "Azure databricks account id"
 }
+
+variable "subscription_id" {
+  description = "Azure subscription id"
+}
+
 variable "aad_groups" {
   description = "List of AAD groups that you want to add to Databricks account"
   type        = list(string)
@@ -48,7 +53,15 @@ variable "azurerm_storage_account_unity_catalog" {
   }) 
 }
 
+variable "databricks_workspace_host_url" {
+  description = "Databricks workspace host url"
+  
+}
+
 data "azuread_group" "this" {
   for_each     = local.aad_groups
   display_name = each.value
+}
+
+data "azurerm_client_config" "current" {
 }
