@@ -25,8 +25,8 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
-      root_path: /Workspace/dev/${bundle.name}/${bundle.target}
+      host: https://adb-4481182903255617.17.azuredatabricks.net
+      root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
   
   stg:
     presets:
