@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "environment" {
-  default = "development"
+  default = "dev"
 }
 
 variable "subscription_id" {
@@ -15,9 +15,10 @@ variable "aad_groups" {
 }
 
 variable "metastore_name"{
-  default = "metastore_azure_development"
+  default = "metastore_azure_dev"
 }
 
 variable "account_id" {
+  description = "Databricks Account Level ID"
   default = "b4fa54e6-433b-4bda-b689-4631e7882ea3"
 }
