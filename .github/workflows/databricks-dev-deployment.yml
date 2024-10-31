@@ -37,7 +37,7 @@ jobs:
       # in the bundle's settings file.
       - run: |
             databricks bundle validate
-            databricks bundle deploy -t dev --host-url ${{ vars.ADB_HOST_URL }}
+            databricks bundle deploy
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}

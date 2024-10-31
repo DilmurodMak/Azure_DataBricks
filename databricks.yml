@@ -24,16 +24,16 @@ targets:
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     mode: development
     default: true
-    # workspace:
-    #   host: https://adb-905511363347848.8.azuredatabricks.net
+    workspace:
+      host: https://adb-905511363347848.8.azuredatabricks.net
+      root_path: /Workspace/dev/${bundle.name}/${bundle.target}
   
   stg:
     presets:
       name_prefix: "staging_"
     workspace:
       host: https://adb-700867790971183.3.azuredatabricks.net
-      # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/02a67d19-17c1-4ff0-8226-b8268144a590/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/stg/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: 02a67d19-17c1-4ff0-8226-b8268144a590
 
