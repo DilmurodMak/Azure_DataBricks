@@ -1,146 +1,178 @@
-# // Put users and service principals to their respective groups
-resource "databricks_group_member" "this" {
-  provider = databricks.azure_account
-  for_each = toset(flatten([
-    for group, details in data.azuread_group.this : [
-      for member in details["members"] : jsonencode({
-        group  = var.databricks_groups[details["object_id"]],
-        member = local.merged_user_sp[member]
-      })
-    ]
-  ]))
-  group_id   = jsondecode(each.value).group
-  member_id  = jsondecode(each.value).member
-}
-
-// Identity federation - adding users/groups from Databricks account to workspace
-resource "databricks_mws_permission_assignment" "workspace_user_groups" {
-  for_each     = data.azuread_group.this
-  provider     = databricks.azure_account
-  workspace_id = var.databricks_workspace_id
-  principal_id = var.databricks_groups[each.value["object_id"]]
-  permissions  = each.key == "account_unity_admin" ? ["ADMIN"] : ["USER"]
-  depends_on   = [databricks_group_member.this]
-}
-
-// Create storage credentials, external locations, catalogs, schemas, and grants
-
-// Create a container in storage account to be used by the environment catalog as root storage
-resource "azurerm_storage_container" "environment_catalog" {
-  name                  = local.storage_container_name
-  storage_account_name  = var.azurerm_storage_account_unity_catalog.name
-  container_access_type = "private"
-}
-
-// Storage credential creation to be used to create external location
+# Storage credentials for external locations
 resource "databricks_storage_credential" "external_mi" {
   name = "${local.environment}-location-mi-credential"
+
   azure_managed_identity {
     access_connector_id = var.azurerm_databricks_access_connector_id
   }
-  owner      = "account_unity_admin"
-  comment    = "Storage credential for all external locations"
-  depends_on = [databricks_mws_permission_assignment.workspace_user_groups]
+
+  owner   = "account_unity_admin"
+  comment = "Storage credential for all external locations"
 }
 
-// Create external location to be used as root storage by the environment catalog
-resource "databricks_external_location" "environment_location" {
-  name            = local.external_location_name
-  url             = format("abfss://%s@%s.dfs.core.windows.net/",
-        azurerm_storage_container.environment_catalog.name,
-        var.azurerm_storage_account_unity_catalog.name)
+# Create storage containers explicitly for each data layer
+resource "azurerm_storage_container" "landing" {
+  name                 = local.data_layers[0].storage_container
+  storage_account_name = var.azurerm_storage_account_unity_catalog.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "bronze" {
+  name                 = local.data_layers[1].storage_container
+  storage_account_name = var.azurerm_storage_account_unity_catalog.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "silver" {
+  name                 = local.data_layers[2].storage_container
+  storage_account_name = var.azurerm_storage_account_unity_catalog.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "gold" {
+  name                 = local.data_layers[3].storage_container
+  storage_account_name = var.azurerm_storage_account_unity_catalog.name
+  container_access_type = "private"
+}
+
+# Create external locations linked to the storage containers
+resource "databricks_external_location" "landing" {
+  name            = local.data_layers[0].external_location
+  url             = format("abfss://%s@%s.dfs.core.windows.net/", local.data_layers[0].storage_container, var.azurerm_storage_account_unity_catalog.name)
   credential_name = databricks_storage_credential.external_mi.id
   owner           = "account_unity_admin"
-  comment         = "External location used by ${local.catalog_name} as root storage"
+  comment         = "External location for landing container"
 }
 
-// Create environment-specific catalog
+resource "databricks_external_location" "bronze" {
+  name            = local.data_layers[1].external_location
+  url             = format("abfss://%s@%s.dfs.core.windows.net/", local.data_layers[1].storage_container, var.azurerm_storage_account_unity_catalog.name)
+  credential_name = databricks_storage_credential.external_mi.id
+  owner           = "account_unity_admin"
+  comment         = "External location for bronze container"
+}
+
+resource "databricks_external_location" "silver" {
+  name            = local.data_layers[2].external_location
+  url             = format("abfss://%s@%s.dfs.core.windows.net/", local.data_layers[2].storage_container, var.azurerm_storage_account_unity_catalog.name)
+  credential_name = databricks_storage_credential.external_mi.id
+  owner           = "account_unity_admin"
+  comment         = "External location for silver container"
+}
+
+resource "databricks_external_location" "gold" {
+  name            = local.data_layers[3].external_location
+  url             = format("abfss://%s@%s.dfs.core.windows.net/", local.data_layers[3].storage_container, var.azurerm_storage_account_unity_catalog.name)
+  credential_name = databricks_storage_credential.external_mi.id
+  owner           = "account_unity_admin"
+  comment         = "External location for gold container"
+}
+
+# Create a catalog associated with the landing external location
 resource "databricks_catalog" "environment" {
   metastore_id = var.metastore_id
   name         = local.catalog_name
-  comment      = "this catalog is for ${var.environment} env"
+  comment      = "Catalog for ${local.environment} environment"
   owner        = "account_unity_admin"
-  storage_root = replace(databricks_external_location.environment_location.url,  "/$", "") # remove trailing slash
+
+  storage_root = replace(databricks_external_location.landing.url, "/$", "")
+
   properties = {
     purpose = var.environment
   }
-  depends_on = [databricks_external_location.environment_location]
 }
 
-// Grants on environment catalog
+# Apply catalog-level grants
 resource "databricks_grants" "environment_catalog" {
   catalog = databricks_catalog.environment.name
+
+  # Standard grants for all roles
   grant {
     principal  = "data_engineer"
     privileges = ["USE_CATALOG"]
   }
+
   grant {
     principal  = "data_scientist"
     privileges = ["USE_CATALOG"]
   }
+
   grant {
     principal  = "data_analyst"
     privileges = ["USE_CATALOG"]
   }
 }
 
-// Create schemas for each layer (bronze, silver, gold) dynamically based on the environment
-resource "databricks_schema" "bronze" {
+# Create schemas explicitly for each data layer
+# Bronze, Silver, Gold
+resource "databricks_schema" "bronze_schema" {
   catalog_name = databricks_catalog.environment.id
-  name         = "bronze"
+  name         = local.data_layers[1].name
   owner        = "account_unity_admin"
-  comment      = "this database is for bronze layer tables/views"
+  comment      = "Schema for bronze layer in ${local.catalog_name}"
 }
 
-// Grants on bronze schema
-resource "databricks_grants" "bronze" {
-  schema = databricks_schema.bronze.id
+resource "databricks_schema" "silver_schema" {
+  catalog_name = databricks_catalog.environment.id
+  name         = local.data_layers[2].name
+  owner        = "account_unity_admin"
+  comment      = "Schema for silver layer in ${local.catalog_name}"
+}
+
+resource "databricks_schema" "gold_schema" {
+  catalog_name = databricks_catalog.environment.id
+  name         = local.data_layers[3].name
+  owner        = "account_unity_admin"
+  comment      = "Schema for gold layer in ${local.catalog_name}"
+}
+
+# Grant permissions on each schema
+# Bronze SIlver Gold
+resource "databricks_grants" "bronze_schema_permissions" {
+  schema = databricks_schema.bronze_schema.id
+
+  # Standard grants for bronze schema
   grant {
     principal  = "data_engineer"
     privileges = ["USE_SCHEMA", "CREATE_FUNCTION", "CREATE_TABLE", "EXECUTE", "MODIFY", "SELECT"]
   }
-}
 
-// Create schema for silver datalake layer in environment
-resource "databricks_schema" "silver" {
-  catalog_name = databricks_catalog.environment.id
-  name         = "silver"
-  owner        = "account_unity_admin"
-  comment      = "this database is for silver layer tables/views"
-}
-
-// Grants on silver schema
-resource "databricks_grants" "silver" {
-  schema = databricks_schema.silver.id
-  grant {
-    principal  = "data_engineer"
-    privileges = ["USE_SCHEMA", "CREATE_FUNCTION", "CREATE_TABLE", "EXECUTE", "MODIFY", "SELECT"]
-  }
   grant {
     principal  = "data_scientist"
     privileges = ["USE_SCHEMA", "SELECT"]
   }
 }
 
-// Create schema for gold datalake layer in environment
-resource "databricks_schema" "gold" {
-  catalog_name = databricks_catalog.environment.id
-  name         = "gold"
-  owner        = "account_unity_admin"
-  comment      = "this database is for gold layer tables/views"
-}
+resource "databricks_grants" "silver_schema_permissions" {
+  schema = databricks_schema.silver_schema.id
 
-// Grants on gold schema
-resource "databricks_grants" "gold" {
-  schema = databricks_schema.gold.id
+  # Standard grants for silver schema
   grant {
     principal  = "data_engineer"
     privileges = ["USE_SCHEMA", "CREATE_FUNCTION", "CREATE_TABLE", "EXECUTE", "MODIFY", "SELECT"]
   }
+
   grant {
     principal  = "data_scientist"
     privileges = ["USE_SCHEMA", "SELECT"]
   }
+}
+
+resource "databricks_grants" "gold_schema_permissions" {
+  schema = databricks_schema.gold_schema.id
+
+  # Standard grants for gold schema
+  grant {
+    principal  = "data_engineer"
+    privileges = ["USE_SCHEMA", "CREATE_FUNCTION", "CREATE_TABLE", "EXECUTE", "MODIFY", "SELECT"]
+  }
+
+  grant {
+    principal  = "data_scientist"
+    privileges = ["USE_SCHEMA", "SELECT"]
+  }
+
+  # Additional grants for data_analyst on the gold schema
   grant {
     principal  = "data_analyst"
     privileges = ["USE_SCHEMA", "SELECT"]
