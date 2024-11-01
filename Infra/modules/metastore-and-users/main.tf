@@ -37,47 +37,47 @@ resource "azurerm_role_assignment" "mi_data_contributor" {
 // Only one metastore can be created in a region
 // I deleted the existing one at https://accounts.azuredatabricks.net/ workspaces
 // I had to delete the existing one rerun this script
-resource "databricks_metastore" "this" {
-  name = "metastore_${var.environment}"
-  storage_root = format("abfss://%s@%s.dfs.core.windows.net/",
-    azurerm_storage_container.unity_catalog.name,
-  azurerm_storage_account.unity_catalog.name)
-  force_destroy = true
-  owner         = "account_unity_admin"
+# resource "databricks_metastore" "this" {
+#   name = "metastore_${var.environment}"
+#   storage_root = format("abfss://%s@%s.dfs.core.windows.net/",
+#     azurerm_storage_container.unity_catalog.name,
+#   azurerm_storage_account.unity_catalog.name)
+#   force_destroy = true
+#   owner         = "account_unity_admin"
 
-  provisioner "local-exec" {
-    command = <<EOT
-      for i in {1..10}; do
-        if databricks metastores list | jq -e '.metastores[] | select(.metastore_id == "${databricks_metastore.this.id}")' > /dev/null; then
-          echo "Metastore is ready."
-          exit 0
-        fi
-        echo "Waiting for metastore to be ready..."
-        sleep 10
-      done
-      echo "Timed out waiting for metastore."
-      exit 1
-    EOT
-    interpreter = ["/bin/bash"]
-  }
-}
+#   provisioner "local-exec" {
+#     command = <<EOT
+#       for i in {1..10}; do
+#         if databricks metastores list | jq -e '.metastores[] | select(.metastore_id == "${databricks_metastore.this.id}")' > /dev/null; then
+#           echo "Metastore is ready."
+#           exit 0
+#         fi
+#         echo "Waiting for metastore to be ready..."
+#         sleep 10
+#       done
+#       echo "Timed out waiting for metastore."
+#       exit 1
+#     EOT
+#     interpreter = ["/bin/bash"]
+#   }
+# }
 
 // Assign managed identity to metastore, 
 resource "databricks_metastore_data_access" "first" {
-  metastore_id = databricks_metastore.this.id
+  metastore_id = data.databricks_metastore.this.id # using existing metastore created from databricks workspace creation
   name         = "the-metastore-key"
   azure_managed_identity {
     access_connector_id = azurerm_databricks_access_connector.unity.id
   }
   is_default = true
 
-  depends_on = [databricks_metastore.this]
+  depends_on = [data.databricks_metastore.this]
 }
 
 // Attach the databricks workspace to the metastore
 resource "databricks_metastore_assignment" "this" {
   workspace_id         = var.databricks_workspace_id
-  metastore_id         = databricks_metastore.this.id
+  metastore_id         = data.databricks_metastore.this.id
   default_catalog_name = "hive_metastore"
 }
 
