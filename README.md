@@ -4,7 +4,7 @@ This repo contains terrafrom code to create a Databricks workspace, Databricks U
 
 ## Architecture
 
-![UC Image](./Infra/uc.png)
+![UC Image](./Infra/architecture.png)
 
 ## Prerequisites
 
