@@ -73,7 +73,3 @@ data "azuread_users" "account_admin_users" {
   ignore_missing = true
   object_ids     = local.account_admin_members
 }
-
-data "databricks_metastore" "this" {
-  metastore_id = databricks_metastore.this.id
-}
