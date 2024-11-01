@@ -1,5 +1,7 @@
 # Terraform Code for Multi Environment Databricks Medallion Deployment
 
+![Multi Environment Image](./mutli_environment.png)
+
 ## Overview
 
 **`Infra/modules`** folder has three modules:
