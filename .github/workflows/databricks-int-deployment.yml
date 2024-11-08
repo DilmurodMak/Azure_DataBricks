@@ -42,10 +42,21 @@ jobs:
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
-      - name: run databricks test workflow
+     # Find all test workflows starting with "Test_", remove .yml extension, and save them as a comma-separated list
+      - name: Set Test Flows
+        id: set_test_flows
         run: |
-          databricks bundle run -t ${{ env.ENV }} Test_Flow
+          TEST_FLOWS=$(find . -name "Test_*" -exec basename {} .yml \; | tr '\n' ',' | sed 's/,$//')
+          echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
+
+      - name: Run databricks test workflows
+        run: |
+          IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
+          for flow in "${FLOWS[@]}"; do
+            echo "Running test flow: $flow"
+            databricks bundle run -t ${{ env.ENV }} "$flow"
+          done
         env:
-          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
