@@ -1,21 +1,21 @@
-name: "Staging Deployment"
+name: "Int Deployment"
 
 concurrency: 1
 
 on:
   workflow_run:
-    # workflows: ["Int Deployment"]
+    # workflows: ["Dev Deployment"]
     # types:
     #   - completed
 
 env:
-  ENV: stg
+  ENV: int
 
 jobs:
   deploy:
     name: "Deploy to Staging"
     runs-on: ubuntu-latest
-    environment: staging
+    environment: int
 
     steps:
       # Check out this repo

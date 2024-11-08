@@ -1,5 +1,5 @@
 variable "region" {
-  default = ""
+  default = "East US"
 }
 
 variable "environment" {
@@ -7,11 +7,11 @@ variable "environment" {
 }
 
 variable "subscription_id" {
-  default = ""
+  default = "aa491e2b-0acc-4729-be48-2eac028ab1c4"
 }
 
 variable "aad_groups" {
-  default = [""]
+  default = ["account_unity_admin", "data_engineer", "data_analyst", "data_scientist"]
 }
 
 variable "metastore_name"{
