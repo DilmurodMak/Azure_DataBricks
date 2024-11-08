@@ -1,8 +1,8 @@
 # Databricks ETL Flow Job
 resources:
   jobs:
-    Test_Flow:
-      name: Test_Flow
+    Test_Flow_2:
+      name: Test_Flow_2
       trigger:
         pause_status: UNPAUSED
         file_arrival:
