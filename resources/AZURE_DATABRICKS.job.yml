@@ -2,7 +2,7 @@
 resources:
   jobs:
     ETL_Flow:
-      name: ETL Flow
+      name: ETL_Flow
       trigger:
         pause_status: UNPAUSED
         file_arrival:

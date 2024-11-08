@@ -22,19 +22,28 @@ targets:
     # - Deployed resources get prefixed with '[dev my_user_name]'
     # - Any job schedules and triggers are paused by default.
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
-    mode: development
+    presets:
+      name_prefix: "dev_"
     default: true
     workspace:
-      host: https://adb-905511363347848.8.azuredatabricks.net
+      host: https://adb-1886426485893952.12.azuredatabricks.net
       root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
   
-  stg:
+  int:
     presets:
-      name_prefix: "staging_"
+      name_prefix: "int_"
     workspace:
-      host: https://adb-700867790971183.3.azuredatabricks.net
-      # We explicitly specify /Workspace/Users/admin@mngenvmcap289075.onmicrosoft.com to make sure we only have a single copy.
-      root_path: /Workspace/stg/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+      host: https://adb-1541710668239137.17.azuredatabricks.net
+      root_path: /Workspace/int/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: ${workspace.current_user.userName}
+  
+  # stg:
+  #   presets:
+  #     name_prefix: "stg_"
+  #   workspace:
+  #     host: 
+  #     root_path: /Workspace/stg/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+  #   run_as:
+  #     service_principal_name: ${workspace.current_user.userName}
 

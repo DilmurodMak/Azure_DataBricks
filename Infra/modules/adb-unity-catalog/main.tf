@@ -35,6 +35,12 @@ resource "azurerm_storage_container" "gold" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "checkpoint" {
+  name                 = local.data_layers[4].storage_container
+  storage_account_name = var.azurerm_storage_account_unity_catalog.name
+  container_access_type = "private"
+}
+
 # Create external locations linked to the storage containers
 resource "databricks_external_location" "landing" {
   name            = local.data_layers[0].external_location
@@ -66,6 +72,14 @@ resource "databricks_external_location" "gold" {
   credential_name = databricks_storage_credential.external_mi.id
   owner           = "account_unity_admin"
   comment         = "External location for gold container"
+}
+
+resource "databricks_external_location" "checkpoint" {
+  name            = local.data_layers[4].external_location
+  url             = format("abfss://%s@%s.dfs.core.windows.net/", local.data_layers[4].storage_container, var.azurerm_storage_account_unity_catalog.name)
+  credential_name = databricks_storage_credential.external_mi.id
+  owner           = "account_unity_admin"
+  comment         = "External location for checkpoint container"
 }
 
 # Create a catalog associated with the landing external location

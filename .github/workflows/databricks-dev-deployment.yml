@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - feature/*
 env:
   ENV: dev
 
@@ -39,6 +38,14 @@ jobs:
             databricks bundle validate
             databricks bundle deploy
         working-directory: .
+        env:
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
+      
+      - name: run databricks job
+        run: |
+          databricks bundle run -t dev ETL_Flow
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}

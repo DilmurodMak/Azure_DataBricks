@@ -1,9 +1,9 @@
 variable "region" {
-  default = "East US"
+  default = "East US 2"
 }
 
 variable "environment" {
-  default = "stg"
+  default = "int"
 }
 
 variable "subscription_id" {
@@ -15,7 +15,7 @@ variable "aad_groups" {
 }
 
 variable "metastore_name"{
-  default = "metastore_azure_stg"
+  default = "metastore_azure_int"
 }
 
 variable "account_id" {
