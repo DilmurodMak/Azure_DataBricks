@@ -13,7 +13,7 @@ env:
 
 jobs:
   deploy:
-    name: "Deploy to Staging"
+    name: "Deploy to Int"
     runs-on: ubuntu-latest
     environment: int
     if: |
