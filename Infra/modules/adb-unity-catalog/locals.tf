@@ -22,9 +22,9 @@ locals {
       external_location = "gold"
     },
     {
-      name              = "checkpoint"
-      storage_container = "checkpoint"
-      external_location = "checkpoint"
+      name              = "checkpoints"
+      storage_container = "checkpoints"
+      external_location = "checkpoints"
     }
   ]
 
