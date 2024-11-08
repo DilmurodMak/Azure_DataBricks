@@ -3,12 +3,11 @@ name: "Int Deployment"
 concurrency: 1
 
 on:
-  workflow_dispatch:
-  # workflow_run:
-    # workflows: ["Dev Deployment"]
-    # types:
-    #   - completed
-
+  workflow_run:
+    workflows: ["Dev Deployment"]
+    types:
+      - completed
+      
 env:
   ENV: int
 
@@ -17,6 +16,7 @@ jobs:
     name: "Deploy to Staging"
     runs-on: ubuntu-latest
     environment: int
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       # Check out this repo
