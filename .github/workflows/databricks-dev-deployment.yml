@@ -42,6 +42,12 @@ jobs:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
+
+      - name: Set Test Flows
+        id: set_test_flows
+        run: |
+          TEST_FLOWS=$(find . -name "test_*" -exec basename {} \; | tr '\n' ',' | sed 's/,$//')
+          echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
       
       - name: run databricks test workflow
         run: |
