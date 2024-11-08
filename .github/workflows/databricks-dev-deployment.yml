@@ -49,10 +49,22 @@ jobs:
           TEST_FLOWS=$(find . -name "test_*" -exec basename {} \; | tr '\n' ',' | sed 's/,$//')
           echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
       
-      - name: run databricks test workflow
+      # - name: run databricks test workflow
+      #   run: |
+      #     databricks bundle run -t ${{ env.ENV }} Test_Flow
+      #   env:
+      #     DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+      #     BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+      #     BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
+      
+      - name: Run databricks test workflows
         run: |
-          databricks bundle run -t ${{ env.ENV }} Test_Flow
+          IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
+          for flow in "${FLOWS[@]}"; do
+            echo "Running test flow: $flow"
+            databricks bundle run -t ${{ env.ENV }} "$flow"
+          done
         env:
-          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
