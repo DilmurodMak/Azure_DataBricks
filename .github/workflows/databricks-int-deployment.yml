@@ -3,7 +3,8 @@ name: "Int Deployment"
 concurrency: 1
 
 on:
-  workflow_run:
+  workflow_dispatch:
+  # workflow_run:
     # workflows: ["Dev Deployment"]
     # types:
     #   - completed
