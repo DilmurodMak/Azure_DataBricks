@@ -1,0 +1,32 @@
+# Databricks ETL Flow Job
+resources:
+  jobs:
+    Test_Flow:
+      name: Test_Flow
+      trigger:
+        pause_status: UNPAUSED
+        file_arrival:
+          url: ${var.FILE_LANDING_URL}
+      tasks:
+        - task_key: load_to_bronze
+          notebook_task:
+            notebook_path: src/02. Load to bronze
+            base_parameters:
+              env: ${bundle.target}
+            source: GIT
+
+      git_source:
+        git_url: https://github.com/DilmurodMak/Azure_DataBricks/
+        git_provider: gitHub
+        git_branch: main
+      queue:
+        enabled: true
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_D4ds_v5
+            autoscale:
+                min_workers: 1
+                max_workers: 4
