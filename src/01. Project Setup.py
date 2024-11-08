@@ -13,7 +13,7 @@ env = dbutils.widgets.get("env")
 
 def create_Bronze_Schema(environment, path):
     print(f"Using {environment}_catalog ")
-    spark.sql(f""" USE CATALOG '{environment}_Catalog'""")
+    spark.sql(f""" USE CATALOG '{environment}_catalog'""")
     print(f"Creating Bronze Schema in {environment}_catalog")
     spark.sql(
         f"""CREATE SCHEMA IF NOT EXISTS `bronze` MANAGED LOCATION '{path}/bronze'"""
@@ -25,9 +25,9 @@ def create_Bronze_Schema(environment, path):
 
 
 def create_Silver_Schema(environment, path):
-    print(f"Using {environment}_Catalog ")
+    print(f"Using {environment}_catalog ")
     spark.sql(f""" USE CATALOG '{environment}_catalog'""")
-    print(f"Creating Silver Schema in {environment}_Catalog")
+    print(f"Creating Silver Schema in {environment}_catalog")
     spark.sql(
         f"""CREATE SCHEMA IF NOT EXISTS `silver` MANAGED LOCATION '{path}/silver'"""
     )
@@ -38,9 +38,9 @@ def create_Silver_Schema(environment, path):
 
 
 def create_Gold_Schema(environment, path):
-    print(f"Using {environment}_Catalog ")
+    print(f"Using {environment}_catalog ")
     spark.sql(f""" USE CATALOG '{environment}_catalog'""")
-    print(f"Creating Gold Schema in {environment}_Catalog")
+    print(f"Creating Gold Schema in {environment}_catalog")
     spark.sql(f"""CREATE SCHEMA IF NOT EXISTS `gold` MANAGED LOCATION '{path}/gold'""")
     print("************************************")
 

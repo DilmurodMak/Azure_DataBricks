@@ -20,6 +20,11 @@ locals {
       name              = "gold"
       storage_container = "gold"
       external_location = "gold"
+    },
+    {
+      name              = "checkpoints"
+      storage_container = "checkpoints"
+      external_location = "checkpoints"
     }
   ]
 
