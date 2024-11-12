@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.." || exit
 
 # Set the directory where YAML files will be generated
-OUTPUT_DIR="resources/test"
+OUTPUT_DIR="resources/"
 mkdir -p "$OUTPUT_DIR"
 
 # Find all _test.py files from the root directory and iterate over them
@@ -24,11 +24,10 @@ resources:
       name: ${base_name}
       tasks:
         - task_key: ${base_name}
-          notebook_task:
-            notebook_path: tests/${base_name}
-            base_parameters:
-              env: \${bundle.target}
+          spark_python_task:
+            python_file: tests/${base_name}
             source: GIT
+          environment_key: \${bundle.env}
 
       git_source:
         git_url: https://github.com/DilmurodMak/Azure_DataBricks/

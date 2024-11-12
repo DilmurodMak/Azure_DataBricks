@@ -5,11 +5,10 @@ resources:
       name: main_test
       tasks:
         - task_key: main_test
-          notebook_task:
-            notebook_path: tests/main_test
-            base_parameters:
-              env: ${bundle.target}
+          spark_python_task:
+            python_file: tests/main_test
             source: GIT
+          environment_key: ${bundle.env}
 
       git_source:
         git_url: https://github.com/DilmurodMak/Azure_DataBricks/
