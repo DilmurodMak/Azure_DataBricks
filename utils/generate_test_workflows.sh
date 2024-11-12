@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.." || exit
 
 # Set the directory where YAML files will be generated
-OUTPUT_DIR="resources/test"
+OUTPUT_DIR="resources/"
 mkdir -p "$OUTPUT_DIR"
 
 # Find all _test.py files from the root directory and iterate over them
@@ -20,15 +20,14 @@ for test_file in $(find ./tests -type f -name "*_test.py"); do
 # Databricks ETL Flow Job
 resources:
   jobs:
-    test_flow_${base_name}:
-      name: test_flow_${base_name}
+    ${base_name}:
+      name: ${base_name}
       tasks:
-        - task_key: ${base_name}_test
-          notebook_task:
-            notebook_path: ${output_file}
-            base_parameters:
-              env: \${bundle.target}
+        - task_key: ${base_name}
+          spark_python_task:
+            python_file: tests/${base_name}
             source: GIT
+          environment_key: \${bundle.env}
 
       git_source:
         git_url: https://github.com/DilmurodMak/Azure_DataBricks/
