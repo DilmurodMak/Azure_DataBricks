@@ -1,4 +1,4 @@
-name: CI Linting, Testing
+name: "CI Linting"
 run-name: Linting and Testing by @${{ github.actor }}
 
 on:
