@@ -1,10 +1,10 @@
 # Databricks ETL Flow Job
 resources:
   jobs:
-    test_flow_main_test:
-      name: test_flow_main_test
+    main_test:
+      name: main_test
       tasks:
-        - task_key: main_test_test
+        - task_key: main_test
           notebook_task:
             notebook_path: resources/test/main_test.yml
             base_parameters:

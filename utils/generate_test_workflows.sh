@@ -20,10 +20,10 @@ for test_file in $(find ./tests -type f -name "*_test.py"); do
 # Databricks ETL Flow Job
 resources:
   jobs:
-    test_flow_${base_name}:
-      name: test_flow_${base_name}
+    ${base_name}:
+      name: ${base_name}
       tasks:
-        - task_key: ${base_name}_test
+        - task_key: ${base_name}
           notebook_task:
             notebook_path: ${output_file}
             base_parameters:
