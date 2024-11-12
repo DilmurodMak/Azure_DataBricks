@@ -1,12 +1,12 @@
 # Databricks ETL Flow Job
 resources:
   jobs:
-    dummy_test:
-      name: dummy_test
+    main_test:
+      name: main_test
       tasks:
-        - task_key: dummy_test
+        - task_key: main_test
           notebook_task:
-            notebook_path: resources/test/dummy_test.yml
+            notebook_path: tests/main_test
             base_parameters:
               env: ${bundle.target}
             source: GIT

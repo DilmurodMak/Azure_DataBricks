@@ -25,7 +25,7 @@ resources:
       tasks:
         - task_key: ${base_name}
           notebook_task:
-            notebook_path: ${output_file}
+            notebook_path: tests/${base_name}
             base_parameters:
               env: \${bundle.target}
             source: GIT
