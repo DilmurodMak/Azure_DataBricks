@@ -61,7 +61,7 @@ jobs:
           for flow in "${FLOWS[@]}"; do
             if [ -n "$flow" ]; then  # Ensure flow is not empty
               echo "Running test flow: $flow"
-              databricks bundle run -t ${{ env.ENV }} "$flow"
+              databricks bundle run -t ${{ env.ENV }} "${{env.ENV}}_$flow"
             fi
           done
         env:

@@ -11,10 +11,9 @@ mkdir -p "$OUTPUT_DIR"
 for test_file in $(find ./tests -type f -name "*_test.py"); do
   # Extract the base filename without extension
   base_name=$(basename "$test_file" .py)
-  base_name_upper="${base_name^^}"
 
   # Define the path to the output YAML file
-  output_file="${OUTPUT_DIR}/${base_name_upper}.job.yml"
+  output_file="${OUTPUT_DIR}/${base_name}.job.yml"
 
   # Generate the YAML content
   cat <<EOF > "$output_file"
