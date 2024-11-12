@@ -51,7 +51,7 @@ jobs:
       - name: Set Test Flows
         id: set_test_flows
         run: |
-          TEST_FLOWS=$(find . -name "*_test.yml" -exec basename {} .yml \; | tr '\n' ',' | sed 's/,$//')
+          TEST_FLOWS=$(find ./tests/ -name "*_test.yml" -exec basename {} .yml \; | tr '\n' ',' | sed 's/,$//')
           echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
 
       - name: Run databricks test workflows
