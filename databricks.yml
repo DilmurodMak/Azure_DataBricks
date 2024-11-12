@@ -5,7 +5,6 @@ bundle:
 
 include:
   - resources/*.yml
-  - resources/test/*.yml
 
 
 variables:
