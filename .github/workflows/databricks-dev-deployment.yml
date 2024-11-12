@@ -56,10 +56,13 @@ jobs:
 
       - name: Run databricks test workflows
         run: |
+          # Iterate over each test flow and run with `databricks bundle run`
           IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
           for flow in "${FLOWS[@]}"; do
-            echo "Running test flow: $flow"
-            databricks bundle run -t ${{ env.ENV }} "$flow"
+            if [ -n "$flow" ]; then  # Ensure flow is not empty
+              echo "Running test flow: $flow"
+              databricks bundle run -t ${{ env.ENV }} "$flow"
+            fi
           done
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
