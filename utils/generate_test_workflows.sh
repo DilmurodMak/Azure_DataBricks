@@ -13,7 +13,7 @@ for test_file in $(find ./tests -type f -name "*_test.py"); do
   base_name=$(basename "$test_file" .py)
 
   # Define the path to the output YAML file
-  output_file="${OUTPUT_DIR}/${base_name}.jobs.yml"
+  output_file="${OUTPUT_DIR}/${base_name}.job.yml"
 
   # Generate the YAML content
   cat <<EOF > "$output_file"
