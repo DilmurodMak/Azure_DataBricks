@@ -3,10 +3,12 @@ name: "Dev Deployment"
 concurrency: 1
 
 on:
-  workflow_run:
-    workflows: ["CI Linting"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
       
 env:
   ENV: dev
