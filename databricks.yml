@@ -16,6 +16,10 @@ variables:
     description: "The path to the file landing location for the dev environment."
     type: string
 
+  TEST_FILE_NAME:
+    description: "Collection of test file names"
+    type: array
+
 targets:
   dev:
     # The default target uses 'mode: development' to create a development copy. 

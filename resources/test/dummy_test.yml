@@ -1,16 +1,12 @@
 # Databricks ETL Flow Job
 resources:
   jobs:
-    Test_Flow_2:
-      name: Test_Flow_2
-      trigger:
-        pause_status: UNPAUSED
-        file_arrival:
-          url: ${var.FILE_LANDING_URL}
+    test_flow_dummy_test:
+      name: test_flow_dummy_test
       tasks:
-        - task_key: load_to_bronze
+        - task_key: dummy_test_test
           notebook_task:
-            notebook_path: src/02. Load to bronze
+            notebook_path: resources/test/dummy_test.yml
             base_parameters:
               env: ${bundle.target}
             source: GIT

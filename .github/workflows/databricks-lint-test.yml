@@ -2,15 +2,14 @@ name: CI Linting, Testing
 run-name: Linting and Testing by @${{ github.actor }}
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
     paths:
       - 'src/**'
       - 'tests/**'
+      - 'resources/**'
+      - 'utils/**'
 
 env:
   UV_VERSION: ">=0.4.26"
@@ -40,8 +39,3 @@ jobs:
       - name: Run Ruff Lint
         run: |
           uv run ruff check
-        
-      - name: Run tests
-        run: |
-          uv run pytest
-      
