@@ -1,5 +1,4 @@
 name: "CI Linting"
-run-name: Linting by @${{ github.actor }}
 
 on:
   pull_request:
