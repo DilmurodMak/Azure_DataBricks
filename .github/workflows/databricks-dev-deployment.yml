@@ -6,6 +6,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
       
 env:
   ENV: dev
@@ -23,7 +26,7 @@ jobs:
       # Check out this repo, so that this workflow can access it.
       - uses: actions/checkout@v4
 
-      # Login to Azure Portal Using Service Principal
+      # Login Azure Portal Using Service Principal
       - name: Azure Login action
         uses: azure/login@v2
         with:
@@ -33,11 +36,13 @@ jobs:
       - uses: databricks/setup-cli@main
 
 
-      # Deploy the bundle to the "dev" target as defined
-      # in the bundle's settings file.
+      # Run bundle validate on pull requests and bundle deploy on pushes to main
       - run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
             databricks bundle validate
+          elif [ "${{ github.event_name }}" == "push" ]; then
             databricks bundle deploy
+          fi
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
@@ -47,6 +52,7 @@ jobs:
       # Find all test workflows starting with "_test.py", remove .py extension, and save them as a comma-separated list
       - name: Set Test Flows
         id: set_test_flows
+        if: github.event_name == 'push'
         run: |
           TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
           echo "Test flows found: $TEST_FLOWS"
@@ -54,6 +60,7 @@ jobs:
          
 
       - name: Run databricks test workflows
+        if: github.event_name == 'push'
         run: |
           echo "Test flows to run: ${{ env.test_flows }}"
 
