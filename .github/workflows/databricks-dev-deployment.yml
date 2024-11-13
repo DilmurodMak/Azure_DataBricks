@@ -14,26 +14,24 @@ env:
   ENV: dev
 
 jobs:
-  # Used by the "pipeline_update" job to deploy the bundle.
-  # Bundle validation is automatically performed as part of this deployment.
-  # If validation fails, this workflow fails.
   deploy:
     name: "Deploy bundle"
     runs-on: ubuntu-latest
     environment: development
 
     steps:
-      # Check out this repo, so that this workflow can access it.
-      - uses: actions/checkout@v4
+     
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      # Login Azure Portal Using Service Principal
-      - name: Azure Login action
+      - name: Azure Login using Service Principal
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
 
-      # Download the Databricks CLI.
-      - uses: databricks/setup-cli@main
+     
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
 
 
       # Run bundle validate on pull requests and bundle deploy on pushes to main
@@ -51,7 +49,6 @@ jobs:
 
       # Find all test workflows starting with "_test.py", remove .py extension, and save them as a comma-separated list
       - name: Set Test Flows
-        id: set_test_flows
         if: github.event_name == 'push'
         run: |
           TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')

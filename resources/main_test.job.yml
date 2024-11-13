@@ -1,4 +1,3 @@
-# Databricks ETL Flow Job
 resources:
   jobs:
     main_test:
