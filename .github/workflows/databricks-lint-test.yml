@@ -33,3 +33,21 @@ jobs:
       - name: Run Ruff Lint
         run: |
           uv run ruff check
+      
+      # Login to Azure Portal Using Service Principal
+      - name: Azure Login action
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
+
+      # Download the Databricks CLI.
+      - uses: databricks/setup-cli@main
+
+
+      # validate bundle
+      - run: databricks bundle validate
+        working-directory: .
+        env:
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
