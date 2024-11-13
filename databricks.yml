@@ -6,7 +6,6 @@ bundle:
 include:
   - resources/*.yml
 
-
 variables:
   ADB_HOST_URL:
     description: "The host of the Databricks workspace for the dev environment."
@@ -17,11 +16,11 @@ variables:
     type: string
 
 targets:
+  # The default target uses 'mode: development'
+  # - Deployed resources get prefixed with '[dev my_user_name]'
+  # - Any job schedules and triggers are paused by default.
+  # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
   dev:
-    # The default target uses 'mode: development' to create a development copy. 
-    # - Deployed resources get prefixed with '[dev my_user_name]'
-    # - Any job schedules and triggers are paused by default.
-    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     presets:
       name_prefix: "dev_"
     default: true
@@ -31,6 +30,7 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
   
+  # Sandbox
   int:
     presets:
       name_prefix: "int_"
@@ -39,13 +39,5 @@ targets:
       root_path: /Workspace/int/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: ${workspace.current_user.userName}
-  
-  # stg:
-  #   presets:
-  #     name_prefix: "stg_"
-  #   workspace:
-  #     host: 
-  #     root_path: /Workspace/stg/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
-  #   run_as:
-  #     service_principal_name: ${workspace.current_user.userName}
+
 

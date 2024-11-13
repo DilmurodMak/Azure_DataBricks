@@ -17,7 +17,6 @@ for test_file in $(find ./tests -type f -name "*_test.py"); do
 
   # Generate the YAML content
   cat <<EOF > "$output_file"
-# Databricks ETL Flow Job
 resources:
   jobs:
     ${base_name}:
