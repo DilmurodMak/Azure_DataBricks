@@ -34,8 +34,8 @@ jobs:
         uses: databricks/setup-cli@main
 
 
-      # Run bundle validate on pull requests and bundle deploy on pushes to main
-      - run: |
+      - name: Validate Databricks Bundle on pull_request or Deploy on Push 
+        run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             databricks bundle validate
           elif [ "${{ github.event_name }}" == "push" ]; then
