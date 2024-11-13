@@ -48,16 +48,22 @@ jobs:
       - name: Set Test Flows
         id: set_test_flows
         run: |
-          TEST_FLOWS=$(find . -name "*_test.yml" -exec basename {} .yml \; | tr '\n' ',' | sed 's/,$//')
+          TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+          echo "Test flows found: $TEST_FLOWS"
           echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
 
 
       - name: Run databricks test workflows
         run: |
+          echo "Test flows to run: ${{ env.test_flows }}"
+
+          # Iterate over each test flow and run with `databricks bundle run`
           IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
           for flow in "${FLOWS[@]}"; do
-            echo "Running test flow: $flow"
-            databricks bundle run -t ${{ env.ENV }} "$flow"
+            if [ -n "$flow" ]; then  # Ensure flow is not empty
+              echo "Running test flow: $flow"
+              databricks bundle run -t ${{ env.ENV }} "$flow"
+            fi
           done
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
