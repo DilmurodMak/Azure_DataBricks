@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  collect-and-run-tests:
+    cmds:
+      - |
+        echo "Collecting test workflows"
+        TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+        echo "Test flows found: $TEST_FLOWS"
+        export TEST_FLOWS
+      - |
+        echo "Running test workflows"
+        IFS=',' read -ra FLOWS <<< "$TEST_FLOWS"
+        for flow in "${FLOWS[@]}"; do
+          if [ -n "$flow" ]; then
+            echo "Running test flow: $flow"
+            databricks bundle run -t {{.ENV}} "$flow"
+          fi
+        done
