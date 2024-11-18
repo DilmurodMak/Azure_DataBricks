@@ -1,63 +1,55 @@
 name: "Dev Deployment"
 
-concurrency: 1
-
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Sandbox Deployment"]
+    types:
+      - completed
       
 env:
-  ENV: dev
+  ENV: int
 
 jobs:
   deploy:
-    name: "Deploy bundle"
+    name: "Deploy to Int"
     runs-on: ubuntu-latest
-    environment: development
+    environment: int
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
 
     steps:
-     
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Azure Login using Service Principal
+      - name: Azure Login Using Service Principal
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_INT_CREDENTIALS }}
 
-     
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
-
-      - name: Validate Databricks Bundle on pull_request or Deploy on Push 
+      - name: Deploy Databricks Bundle
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            databricks bundle validate
-          elif [ "${{ github.event_name }}" == "push" ]; then
-            databricks bundle deploy
-          fi
+          databricks bundle validate -t ${{ env.ENV }}
+          databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
-          DATABRICKS_BUNDLE_ENV: ${{ env.ENV}}
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
-      # Find all test workflows starting with "_test.py", remove .py extension, and save them as a comma-separated list
+      # Find all test workflows starting with "_test.yml", remove .yml extension, and save them as a comma-separated list
       - name: Set Test Flows
-        if: github.event_name == 'push'
         run: |
           TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
           echo "Test flows found: $TEST_FLOWS"
           echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
-         
+
 
       - name: Run databricks test workflows
-        if: github.event_name == 'push'
         run: |
           echo "Test flows to run: ${{ env.test_flows }}"
 

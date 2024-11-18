@@ -16,20 +16,6 @@ variables:
     type: string
 
 targets:
-  # The default target uses 'mode: development'
-  # - Deployed resources get prefixed with '[dev my_user_name]'
-  # - Any job schedules and triggers are paused by default.
-  # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
-  dev:
-    presets:
-      name_prefix: "dev_"
-    default: true
-    workspace:
-      host: https://adb-1886426485893952.12.azuredatabricks.net
-      root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
-    run_as:
-      service_principal_name: ${workspace.current_user.userName}
-  
   # Sandbox
   int:
     presets:
@@ -40,4 +26,13 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
 
+  dev:
+    presets:
+      name_prefix: "dev_"
+    default: true
+    workspace:
+      host: https://adb-1886426485893952.12.azuredatabricks.net
+      root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: ${workspace.current_user.userName}
 
