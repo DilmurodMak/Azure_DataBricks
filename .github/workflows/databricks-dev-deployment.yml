@@ -25,12 +25,6 @@ jobs:
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Azure Login Using Service Principal
         uses: azure/login@v2
         with:
@@ -46,7 +40,26 @@ jobs:
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
-      - name: Collect and Run Tests
-        run: task collect-and-run-tests
+      - name: Set Test Flows
+        run: |
+          TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+          echo "Test flows found: $TEST_FLOWS"
+          echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
+    
+      - name: Run databricks test workflows
+        run: |
+          echo "Test flows to run: ${{ env.test_flows }}"
+
+          # Iterate over each test flow and run with `databricks bundle run`
+          IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
+          for flow in "${FLOWS[@]}"; do
+            if [ -n "$flow" ]; then  # Ensure flow is not empty
+              echo "Running test flow: $flow"
+              databricks bundle run -t ${{ env.ENV }} "$flow"
+            fi
+          done
         env:
-          ENV: ${{ env.ENV }}
+          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
+
