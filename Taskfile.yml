@@ -2,18 +2,26 @@ version: '3'
 
 tasks:
   collect-and-run-tests:
+    desc: "Collect and run tests workflows"
+    dir: '{{.USER_WORKING_DIR}}'
     cmds:
       - |
         echo "Collecting test workflows"
-        TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+        TEST_FLOWS=$(find ./resources -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+        if [ -z "$TEST_FLOWS" ]; then
+          echo "No test workflows found."
+          exit 0
+        fi
         echo "Test flows found: $TEST_FLOWS"
         export TEST_FLOWS
       - |
         echo "Running test workflows"
-        IFS=',' read -ra FLOWS <<< "$TEST_FLOWS"
+        bash -c '
+        IFS="," read -r -a FLOWS <<< "$TEST_FLOWS"
         for flow in "${FLOWS[@]}"; do
           if [ -n "$flow" ]; then
             echo "Running test flow: $flow"
             databricks bundle run -t {{.ENV}} "$flow"
           fi
         done
+        '
