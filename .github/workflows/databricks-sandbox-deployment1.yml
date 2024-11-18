@@ -54,6 +54,8 @@ jobs:
       - name: Run test workflows
         run: task run-tests
         env:
+          env: ${{ env.ENV }}
+          test_flows: ${{ env.test_flows }}
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}

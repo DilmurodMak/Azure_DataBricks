@@ -20,10 +20,15 @@ tasks:
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
       - |
-        IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
-          for flow in "${FLOWS[@]}"; do
-            if [ -n "$flow" ]; then  # Ensure flow is not empty
-              echo "Running test flow: $flow"
-              databricks bundle run -t ${{ env.ENV }} "$flow"
-            fi
+        if [ -z "{{.test_flows}}" ]; then
+          echo "No test flows provided"
+          exit 0
+        fi
+        echo "Test flows to run: {{.test_flows}}"
+        IFS=',' read -ra FLOWS <<< "{{.test_flows}}"
+        for flow in "${FLOWS[@]}"; do
+          if [ -n "$flow" ]; then
+            echo "Running test flow: $flow"
+            databricks bundle run -t {{.env}} "$flow"
+          fi
         done
