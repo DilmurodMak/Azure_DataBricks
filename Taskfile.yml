@@ -26,9 +26,10 @@ tasks:
         # Set the Internal Field Separator to comma
         IFS=',' 
 
-        while read -r flow; do
+        # Loop through each flow and run it separately
+        for flow in $TEST_FLOWS; do
           if [ -n "$flow" ]; then
             echo "Running test flow: $flow"
             databricks bundle run -t {{.ENV}} "$flow"
           fi
-        done <<< "$TEST_FLOWS"
+        done
