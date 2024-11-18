@@ -9,7 +9,7 @@ on:
       - main
       
 env:
-  ENV: dev
+  ENV: int
 
 jobs:
   deploy:
