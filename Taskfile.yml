@@ -16,12 +16,14 @@ tasks:
         export TEST_FLOWS
       - |
         echo "Running test workflows"
-        bash -c '
-        IFS="," read -r -a FLOWS <<< "$TEST_FLOWS"
+        IFS=',' read -r -a FLOWS <<< "$TEST_FLOWS"
         for flow in "${FLOWS[@]}"; do
           if [ -n "$flow" ]; then
             echo "Running test flow: $flow"
             databricks bundle run -t {{.ENV}} "$flow"
+            if [ $? -ne 0 ]; then
+              echo "Test flow $flow failed. Stopping further execution."
+              exit 1
+            fi
           fi
         done
-        '
