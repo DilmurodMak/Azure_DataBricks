@@ -19,22 +19,16 @@ tasks:
     desc: "Run Databricks test workflows"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-       - |
-        # Ensure the test_flows environment variable is set
-        if [ -z "{{.test_flows}}" ]; then
-          echo "No test flows provided."
-          exit 0
-        fi
-        
-        echo "Test flows to run: {{.test_flows}}"
-        
-        #Read test flows into an array
-        IFS=',' read -ra FLOWS <<< "{{.test_flows}}"
-        
-        # Loop through each test flow and run it
-        for flow in "${FLOWS[@]}"; do
+      - |
+        # Read test flows into a variable
+        TEST_FLOWS="{{.test_flows}}"
+
+        # Set the Internal Field Separator to comma
+        IFS=',' 
+
+        while read -r flow; do
           if [ -n "$flow" ]; then
             echo "Running test flow: $flow"
             databricks bundle run -t {{.ENV}} "$flow"
           fi
-        done
+        done <<< "$TEST_FLOWS"
