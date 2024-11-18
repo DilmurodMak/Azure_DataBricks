@@ -13,3 +13,4 @@ tasks:
           exit 0
         fi
         echo "Test flows found: $TEST_FLOWS"
+        echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
