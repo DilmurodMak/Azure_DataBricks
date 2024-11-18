@@ -42,25 +42,25 @@ jobs:
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
+      - name: Install Task
+        if: github.event_name == 'push'
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Set Test Flows
-        run: |
-          TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
-          echo "Test flows found: $TEST_FLOWS"
-          echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
-  
-      - name: Run databricks test workflows
-        run: |
-          echo "Test flows to run: ${{ env.test_flows }}"
+        if: github.event_name == 'push'
+        run: task collect-tests
 
-          # Iterate over each test flow and run with `databricks bundle run`
-          IFS=',' read -ra FLOWS <<< "${{ env.test_flows }}"
-          for flow in "${FLOWS[@]}"; do
-            if [ -n "$flow" ]; then  # Ensure flow is not empty
-              echo "Running test flow: $flow"
-              databricks bundle run -t ${{ env.ENV }} "$flow"
-            fi
-          done
+      - name: Run test workflows
+        if: github.event_name == 'push'
+        run: task run-tests
         env:
+          # task file required variables
+          env: ${{ env.ENV }}
+          test_flows: ${{ env.test_flows }}
+          # bundle file required variables
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
