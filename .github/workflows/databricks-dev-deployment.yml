@@ -13,7 +13,7 @@ jobs:
   deploy:
     name: "Deploy to Int"
     runs-on: ubuntu-latest
-    environment: int
+    environment: development
     if: |
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
