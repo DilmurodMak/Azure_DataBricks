@@ -58,7 +58,6 @@ jobs:
         run: task run-tests
         env:
           # task file required variables
-          env: ${{ env.ENV }}
           test_flows: ${{ env.test_flows }}
           # bundle file required variables
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
