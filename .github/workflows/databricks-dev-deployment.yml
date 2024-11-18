@@ -41,11 +41,9 @@ jobs:
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
       - name: Set Test Flows
-        if: github.event_name == 'push'
         run: task collect-tests
 
       - name: Run test workflows
-        if: github.event_name == 'push'
         run: task run-tests
         env:
           # task file required variables
