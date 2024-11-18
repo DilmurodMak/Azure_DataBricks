@@ -19,16 +19,22 @@ tasks:
     desc: "Run Databricks test workflows"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - |
+       - |
+        # Ensure the test_flows environment variable is set
         if [ -z "{{.test_flows}}" ]; then
-          echo "No test flows provided"
+          echo "No test flows provided."
           exit 0
         fi
+        
         echo "Test flows to run: {{.test_flows}}"
+        
+        #Read test flows into an array
         IFS=',' read -ra FLOWS <<< "{{.test_flows}}"
+        
+        # Loop through each test flow and run it
         for flow in "${FLOWS[@]}"; do
           if [ -n "$flow" ]; then
             echo "Running test flow: $flow"
-            databricks bundle run -t {{.env}} "$flow"
+            databricks bundle run -t {{.ENV}} "$flow"
           fi
         done
