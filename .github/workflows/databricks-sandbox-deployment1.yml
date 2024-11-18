@@ -31,22 +31,31 @@ jobs:
 
       - name: Deploy Databricks Bundle
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          # if [ "${{ github.event_name }}" == "pull_request" ]; then
             databricks bundle validate -t ${{ env.ENV }}
-          elif [ "${{ github.event_name }}" == "push" ]; then
+          # elif [ "${{ github.event_name }}" == "push" ]; then
             databricks bundle deploy -t ${{ env.ENV }}
-          fi
+          # fi
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
 
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Set Test Flows
-        run: |
-          TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
-          echo "Test flows found: $TEST_FLOWS"
-          echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
+        run: task collect-tests
+
+      # - name: Set Test Flows
+      #   run: |
+      #     TEST_FLOWS=$(find . -name "*_test.job.yml" -exec basename {} .job.yml \; | tr '\n' ',' | sed 's/,$//')
+      #     echo "Test flows found: $TEST_FLOWS"
+      #     echo "test_flows=$TEST_FLOWS" >> $GITHUB_ENV
   
       - name: Run databricks test workflows
         run: |
