@@ -25,7 +25,7 @@ jobs:
       - name: Azure Login using Service Principal
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_INT_CREDENTIALS }}
 
      
       - name: Setup Databricks CLI
