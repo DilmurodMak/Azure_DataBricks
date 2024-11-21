@@ -34,15 +34,15 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
 
-  # stg:
-  #   presets:
-  #     name_prefix: "stg_"
-  #   default: true
-  #   workspace:
-  #     host: <ADB_WORKSPACE_URL>
-  #     root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
-  #   run_as:
-  #     service_principal_name: ${workspace.current_user.userName}
+  stg:
+    presets:
+      name_prefix: "stg_"
+    default: true
+    workspace:
+      host: https://adb-1886426485893952.12.azuredatabricks.net
+      root_path: /Workspace/stg/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: ${workspace.current_user.userName}
 
   # prod:
   #   presets:
