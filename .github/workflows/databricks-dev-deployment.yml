@@ -1,10 +1,12 @@
 name: "Dev Deployment"
 
 on:
-  workflow_run:
-    workflows: ["Sandbox Deployment"]
-    types:
-      - completed
+  workflow_dispatch:
+  
+  # workflow_run:
+  #   workflows: ["Sandbox Deployment"]
+  #   types:
+  #     - completed
 
 env:
   ENV: dev
@@ -32,7 +34,7 @@ jobs:
 
       - name: Deploy Databricks Bundle
         run: |
-          databricks bundle validate -t ${{ env.ENV }}
+          databricks bundle validate -t ${{ env.ENV }} -o json
           databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
