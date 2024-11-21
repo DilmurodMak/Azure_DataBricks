@@ -1,27 +1,71 @@
 name: "Dev Deployment"
 
 on:
-  workflow_run:
-    workflows: ["Sandbox Deployment"]
-    types:
-      - completed
+  workflow_dispatch:
 
 env:
   ENV: dev
 
 jobs:
-  deploy:
-    name: "Deploy bundle"
+  prepare-changes:
+    name: "Prepare Changes"
     runs-on: ubuntu-latest
-    environment: development
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main'
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      
+
+      - name: Find Changes Since Last Tag
+        id: diff
+        run: |
+          # Fetch all history and tags to ensure latest data is available
+          git fetch --tags
+          
+          # Get the latest tag; fallback if no tags are found
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) || echo "HEAD~1")
+          echo "Latest tag: $latest_tag"
+          
+          # Generate a diff between the latest tag and HEAD
+          git diff --name-status "$latest_tag" HEAD > changes.txt
+
+          # Convert diff output to JSON format
+          echo "[" > changes.json
+          awk '{
+            print "{\"file\":\""$2"\",\"change\":\""$1"\"},"
+          }' changes.txt | sed '$ s/,$//' >> changes.json
+          echo "]" >> changes.json
+
+          # Validate JSON formatting
+          jq . changes.json > /dev/null || { echo "Invalid JSON in changes.json"; exit 1; }
+
+          # Export JSON file for later steps
+          echo "diff-json=$(cat changes.json)" >> $GITHUB_ENV
+
+        env:
+          # Required if working with private repositories
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output Changes JSON
+        run: |
+          echo "Changes detected:"
+          cat changes.json
+
+      - name: Upload Changes JSON as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-changes
+          path: changes.json
+
+  deploy:
+    name: "Deploy Bundle"
+    runs-on: ubuntu-latest
+    needs: prepare-changes
+    environment: development
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
@@ -30,31 +74,33 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_DEV_CREDENTIALS }}
 
+      - name: Show Changes Before Deployment
+        run: |
+          echo "Changes detected in this deployment:"
+          cat changes.json || { echo "No changes detected or changes.json missing."; exit 1; }
+
       - name: Deploy Databricks Bundle
         run: |
-          databricks bundle validate -t ${{ env.ENV }}
+          echo "Validating and deploying Databricks bundle..."
+          databricks bundle validate -t ${{ env.ENV }} -o json || { echo "Validation failed"; exit 1; }
           databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
-      
-      - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Test Flows
+        if: github.event_name == 'push'
         run: task collect-tests
 
-      - name: Run test workflows
+      - name: Run Test Workflows
+        if: github.event_name == 'push'
         run: task run-tests
         env:
-          # task file required variables
+          # Task-specific variables
           test_flows: ${{ env.test_flows }}
-          # bundle file required variables
+          # Bundle-specific variables
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}

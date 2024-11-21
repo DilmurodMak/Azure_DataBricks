@@ -32,9 +32,9 @@ jobs:
       - name: Deploy Databricks Bundle
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            databricks bundle validate -t ${{ env.ENV }}
+            databricks bundle validate -t ${{ env.ENV }} -o json
           elif [ "${{ github.event_name }}" == "push" ]; then
-            databricks bundle deploy -t ${{ env.ENV }}
+            databricks bundle deploy -t ${{ env.ENV }} -o json
           fi
         working-directory: .
         env:
