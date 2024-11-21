@@ -18,29 +18,37 @@ jobs:
       - name: Find Changes Since Last Tag
         id: diff
         run: |
-          # Ensure we're fetching all history and tags
+          # Fetch all history and tags to ensure latest data is available
           git fetch --tags
           
-          # Get the latest tag
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          # Get the latest tag; fallback if no tags are found
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) || echo "HEAD~1")
           echo "Latest tag: $latest_tag"
           
           # Generate a diff between the latest tag and HEAD
-          git diff --name-status $latest_tag HEAD > changes.txt
+          git diff --name-status "$latest_tag" HEAD > changes.txt
 
-          # Convert diff to JSON format
+          # Convert diff output to JSON format
           echo "[" > changes.json
-          cat changes.txt | awk '{
+          awk '{
             print "{\"file\":\""$2"\",\"change\":\""$1"\"},"
-          }' >> changes.json
-          echo "{}]" >> changes.json
+          }' changes.txt | sed '$ s/,$//' >> changes.json
+          echo "]" >> changes.json
 
-          # Export JSON file location for use in the next steps
+          # Validate JSON formatting
+          jq . changes.json > /dev/null || { echo "Invalid JSON in changes.json"; exit 1; }
+
+          # Export JSON file for later steps
           echo "diff-json=$(cat changes.json)" >> $GITHUB_ENV
-          
+
         env:
-          # Required if you use private repositories
+          # Required if working with private repositories
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output Changes JSON
+        run: |
+          echo "Changes detected:"
+          cat changes.json
 
       - name: Upload Changes JSON as Artifact
         uses: actions/upload-artifact@v3
@@ -68,12 +76,13 @@ jobs:
 
       - name: Show Changes Before Deployment
         run: |
-          echo "Changes Detected:"
-          cat changes.json
+          echo "Changes detected in this deployment:"
+          cat changes.json || { echo "No changes detected or changes.json missing."; exit 1; }
 
       - name: Deploy Databricks Bundle
         run: |
-          databricks bundle validate -t ${{ env.ENV }} -o json
+          echo "Validating and deploying Databricks bundle..."
+          databricks bundle validate -t ${{ env.ENV }} -o json || { echo "Validation failed"; exit 1; }
           databricks bundle deploy -t ${{ env.ENV }}
         working-directory: .
         env:
@@ -85,13 +94,13 @@ jobs:
         if: github.event_name == 'push'
         run: task collect-tests
 
-      - name: Run test workflows
+      - name: Run Test Workflows
         if: github.event_name == 'push'
         run: task run-tests
         env:
-          # task file required variables
+          # Task-specific variables
           test_flows: ${{ env.test_flows }}
-          # bundle file required variables
+          # Bundle-specific variables
           DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
           BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
           BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}

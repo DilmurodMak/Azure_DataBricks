@@ -12,67 +12,15 @@ env:
   ENV: int
 
 jobs:
-  prepare-changes:
-    name: "Prepare Changes"
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Ensure all history is available for diff
-
-      - name: Find Changes Between Branches
-        id: diff
-        run: |
-          # Find the diff between the PR source and the target branch
-          git diff --name-status ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changes.txt
-          
-          # Convert diff to JSON format
-          echo "[" > changes.json
-          while IFS= read -r line; do
-            file=$(echo "$line" | awk '{print $2}')
-            change=$(echo "$line" | awk '{print $1}')
-            echo "{\"file\":\"$file\",\"change\":\"$change\"}," >> changes.json
-          done < changes.txt
-          # Remove trailing comma and close JSON array
-          sed -i '$ s/,$//' changes.json
-          echo "]" >> changes.json
-
-          # Validate JSON format
-          if ! jq empty changes.json; then
-            echo "Error: Invalid JSON format in changes.json"
-            exit 1
-          fi
-
-      - name: Upload Changes JSON as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: pull-request-changes
-          path: changes.json
-
   deploy:
-    name: "Deploy Bundle"
+    name: "Deploy bundle"
     runs-on: ubuntu-latest
     environment: int
-    needs: prepare-changes
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Download Changes JSON
-        uses: actions/download-artifact@v3
-        with:
-          name: pull-request-changes
-
-      - name: Show Changes (Pull Request)
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "Detected Changes in Pull Request:"
-          cat changes.json
-
+      
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
