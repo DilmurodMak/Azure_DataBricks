@@ -109,7 +109,7 @@ resource "databricks_user" "this" {
   // Review warning before deactivating or deleting users from databricks account
   // https://learn.microsoft.com/en-us/azure/databricks/administration-guide/users-groups/scim/#add-users-and-groups-to-your-azure-databricks-account-using-azure-active-directory-azure-ad
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 

@@ -1,3 +1,8 @@
+variable "region" {
+  description = "Azure region"
+  type        = string
+}
+
 variable "account_id" {
   description = "Azure databricks account id"
 }
