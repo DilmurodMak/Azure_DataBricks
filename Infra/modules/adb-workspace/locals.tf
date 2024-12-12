@@ -1,3 +1,3 @@
 locals {
-  prefix = "databricks-${var.environment}"
+  prefix = "maktest-databricks-${var.environment}"
 }

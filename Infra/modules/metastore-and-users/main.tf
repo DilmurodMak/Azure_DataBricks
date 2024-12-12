@@ -22,7 +22,14 @@ resource "azurerm_storage_account" "unity_catalog" {
   location                 = var.region
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  is_hns_enabled           = true
+
+  is_hns_enabled                  = true
+  shared_access_key_enabled       = false
+  default_to_oauth_authentication = true
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
 // Create a container in storage account to be used by unity catalog metastore as root storage
@@ -45,7 +52,7 @@ resource "azurerm_role_assignment" "mi_data_contributor" {
 // I deleted the existing one at https://accounts.azuredatabricks.net/ workspaces
 // I had to delete the existing one rerun this script
 resource "databricks_metastore" "this" {
-  name = "metastore_${var.environment}"
+  name = var.metastore_name
   storage_root = format("abfss://%s@%s.dfs.core.windows.net/",
     azurerm_storage_container.unity_catalog.name,
   azurerm_storage_account.unity_catalog.name)

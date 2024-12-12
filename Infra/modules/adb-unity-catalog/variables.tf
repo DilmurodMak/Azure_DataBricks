@@ -46,16 +46,19 @@ variable "metastore_id" {
   type        = string
 }
 
-variable "azurerm_storage_account_unity_catalog" {
+variable "azurerm_storage_account_unity_catalog_id" {
   description = "Azure storage account for Unity catalog"
-  type        = object({
-    name = string
-  }) 
 }
 
 variable "databricks_workspace_host_url" {
   description = "Databricks workspace host url"
-  
+  type        = string
+
+}
+
+variable "azure_storage_account_name" {
+  description = "Azure storage account name"
+  type        = string
 }
 
 data "azuread_group" "this" {
