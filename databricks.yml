@@ -1,5 +1,3 @@
-# This is a Databricks asset bundle definition for AZURE_DATABRICKS.
-# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 bundle:
   name: AZURE_DATABRICKS
 
@@ -16,20 +14,6 @@ variables:
     type: string
 
 targets:
-  # The default target uses 'mode: development'
-  # - Deployed resources get prefixed with '[dev my_user_name]'
-  # - Any job schedules and triggers are paused by default.
-  # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
-  dev:
-    presets:
-      name_prefix: "dev_"
-    default: true
-    workspace:
-      host: https://adb-1886426485893952.12.azuredatabricks.net
-      root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
-    run_as:
-      service_principal_name: ${workspace.current_user.userName}
-  
   # Sandbox
   sandbox:
     presets:
@@ -40,4 +24,33 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
 
+  dev:
+    presets:
+      name_prefix: "dev_"
+    default: true
+    workspace:
+      host: https://adb-1886426485893952.12.azuredatabricks.net
+      root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: ${workspace.current_user.userName}
+
+  stg:
+    presets:
+      name_prefix: "stg_"
+    default: true
+    workspace:
+      host: https://adb-1886426485893952.12.azuredatabricks.net
+      root_path: /Workspace/stg/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: ${workspace.current_user.userName}
+
+  # prod:
+  #   presets:
+  #     name_prefix: "prod_"
+  #   default: true
+  #   workspace:
+  #     host: <ADB_WORKSPACE_URL>
+  #     root_path: /Workspace/dev/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
+  #   run_as:
+  #     service_principal_name: ${workspace.current_user.userName}
 
