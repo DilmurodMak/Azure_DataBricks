@@ -11,11 +11,7 @@
 
 **NOTE** - *When **`adb-workspace`** module runs it creates databricks workspace, and by default it creates a metastore in the same region. Databricks allows only **ONE METASTORE** per region. **`metastore-and-users`** module deploys new metastore with our required configurations, but we have to delete existing metastore prior running the module*
 
-## Entry Point
-
-**`Infra/envs`** - Has three environments with required values to each environment. In this example we are defining **`development`** environment only.
-
-**`Infra/envs/development/main.tf`** - references the three modules and passes the required values from `variables.tf` to the modules.
+**NOTE** - *During script execution you will receive `Error: cannot create metastore: This account with id <Account_ID> has reached the limit for metastores in region <Region>` * error. This is because we have reached the limit of metastores in the region. To fix this, we need to delete existing metastore and re-run the script.*
 
 ## How to Run
 
@@ -23,86 +19,48 @@
 - Clone the repository
 - Install Terraform CLI if not installed already [Terraform Installation](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 - Install Azure CLI if not installed already [Azure CLI Installation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- `Infra/envs/development/variables.tf` - Update the values as per your requirement
+- `Infra/deployment/.env` - Update the values as per your requirement
+- Have databricks admin level access. Login to get databricks account id `[accounts.databricks.net](https://accounts.azuredatabricks.net/)`
 
 ### Steps
 
-**NOTE** - modules are dependant to each other, so we have to run the modules in the following order by commenting out the rest of the modules in the `main.tf` file
+1. Login to Azure
+```bash
+az login
+```
 
-- `cd Infra/envs/development/main.tf`
-- Comment out the modules in the `main.tf` file
-  ```hcl
-  module "azure_databricks_workspace" {
-  source      = "../../modules/adb-workspace"
-  region      = var.region
-  environment = var.environment
-  }
+2. Set the subscription
+```bash
+az account set --subscription <subscription-id>
+```
 
-    // module "metastore_and_users" {
-        ...
-    }
-    // module "adb_unity_catalog" {
-        ...
-    }
-    ```
+3. Make the script executable
+```bash
+chmod +x dev.deploy.sh
+```
 
-- Run the following command to deploy the workspace
-    ```bash
-    terraform init
-    terraform plan
-    terraform apply
-    ```
+4. Run the script to deploy the modules sequentially
+```bash
+./dev.deploy.sh
+```
 
-- Once the workspace is deployed, delete the existing metastore from the databricks workspace. Go to the databricks workspace -> click top right `your_workspace_name` -> `Account management`. This will opens up admin level databricks account. Navigate to Catalog on the left side -> Select the metastore in the region and delete.
+## Destroy
 
+### Steps
 
-#### Uncomment next module in the `Infra/envs/development/main.tf` file
-- 
-  ```hcl
-  module "azure_databricks_workspace" {
-     ...
-  }
+1. Change directory to `Infra/deployment`
+```bash
+cd Infra/deployment
+```
+2. Make the script executable
+```bash
+chmod +x dev.destroy.sh
+```
+3. Run the script to destroy the modules by passing 
+```bash
+./dev.destroy.sh --destroy
+```
 
-  module "metastore_and_users" {
-  source      = "../../modules/metastore-and-users"
-  region      = var.region
-  environment = var.environment
-  }
+## Error Handling
 
-    // module "adb_unity_catalog" {
-        ...
-    }
-    ```
-
-- Run the following command to deploy the metastore and users
-    ```bash
-    terraform init
-    terraform plan
-    terraform apply
-    ```
-
-#### Uncomment the final module in the `Infra/envs/development/main.tf` file
-
-- 
-  ```hcl
-  module "azure_databricks_workspace" {
-     ...
-  }
-
-  module "metastore_and_users" {
-     ...
-  }
-
-  module "adb_unity_catalog" {
-  source      = "../../modules/adb-unity-catalog"
-  region      = var.region
-  environment = var.environment
-  }
-  ```
-
-- Run the following command to deploy the unity catalog
-    ```bash
-    terraform init
-    terraform plan
-    terraform apply
-    ```
+In case of any script fails during resource creation, try rerun the script. It will reference the local state files, and will try again to create the resources.

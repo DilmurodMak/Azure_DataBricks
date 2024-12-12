@@ -15,9 +15,9 @@ variables:
 
 targets:
   # Sandbox
-  int:
+  sandbox:
     presets:
-      name_prefix: "int_"
+      name_prefix: "sandbox_"
     workspace:
       host: https://adb-1541710668239137.17.azuredatabricks.net
       root_path: /Workspace/int/${workspace.current_user.userName}/${bundle.name}/${bundle.target}
