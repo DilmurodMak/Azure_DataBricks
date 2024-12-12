@@ -1,10 +1,6 @@
 # Terraform Code for Multi Environment Databricks Medallion Deployment
 
-<<<<<<< HEAD
 ![Multi Environment Image](../images/architecture.png)
-=======
-![Architecture](./architecture.png)
->>>>>>> main
 
 ## Overview
 
