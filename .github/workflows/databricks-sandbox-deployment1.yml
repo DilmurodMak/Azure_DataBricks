@@ -22,7 +22,7 @@ jobs:
 
   deploy:
       if: github.event_name == 'push'
-      uses: ./.github/workflows/reusable-deploy.yml
+      uses: ./.github/workflows/databricks-deploy.yml
       with:
         env: dev
       secrets:
