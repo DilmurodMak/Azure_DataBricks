@@ -17,6 +17,7 @@ jobs:
   lint:
     name: Lint Code and Validate Databricks Bundle
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
 
     steps:
       - name: Checkout Repository
