@@ -10,6 +10,7 @@ on:
 
 jobs:
   lint:
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/databricks-lint.yml
     with:
       uv_version: ">=0.4.26"
@@ -21,4 +22,4 @@ jobs:
       with:
         env: dev
       secrets:
-        azure_credentials: ${{ secrets.AZURE_INT_CREDENTIALS }}
+        azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
