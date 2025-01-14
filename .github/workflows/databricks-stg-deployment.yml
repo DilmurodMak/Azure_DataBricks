@@ -5,12 +5,12 @@ on:
 
 jobs:
   validate:
-    uses: ./.github/workflows/databricks-validate.yml
+    uses: ./.github/workflows/templates/databricks-validate.yml
     with:
       env: staging
 
   deploy:
-    uses: ./.github/workflows/databricks-deploy.yml
+    uses: ./.github/workflows/templates/databricks-deploy.yml
     with:
       env: staging
     secrets:
