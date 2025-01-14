@@ -8,6 +8,9 @@ on:
 
 jobs:
   deploy:
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     uses: ./.github/workflows/databricks-deploy.yml
     with:
       env: development
