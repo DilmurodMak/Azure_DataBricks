@@ -11,20 +11,20 @@ on:
 jobs:
   lint:
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/templates/databricks-lint.yml
+    uses: ./.github/workflows/databricks-lint.yml
     with:
       uv_version: ">=0.4.26"
       python_version: "3.11"
   
   validate:
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/templates/databricks-validate.yml
+    uses: ./.github/workflows/databricks-validate.yml
     with:
       env: int
 
   deploy:
       if: github.event_name == 'push'
-      uses: ./.github/workflows/templates/databricks-deploy.yml
+      uses: ./.github/workflows/databricks-deploy.yml
       with:
         env: int
       secrets:
