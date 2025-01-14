@@ -1,0 +1,42 @@
+name: Databricks Deployment Workflow
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+    secrets:
+      azure_credentials:
+        required: true
+
+jobs:
+  deploy:
+    name: Validate and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Azure Login Using Service Principal
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.azure_credentials }}
+
+      - name: Validate Databricks Bundle
+        run: |
+          echo "Validating Databricks bundle for ${{ inputs.env }} environment..."
+          databricks bundle validate -t ${{ inputs.env }} -o json
+
+      - name: Deploy Databricks Bundle
+        run: |
+          echo "Deploying Databricks bundle for ${{ inputs.env }} environment..."
+          databricks bundle deploy -t ${{ inputs.env }}
+        env:
+          DATABRICKS_BUNDLE_ENV: ${{ inputs.env }}
+          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
+          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}

@@ -9,57 +9,21 @@ on:
       - main
 
 env:
-  ENV: int
+  UV_VERSION: ">=0.4.26"
+  PYTHON_VERSION: "3.11"
+
 
 jobs:
+  lint:
+    uses: ./.github/workflows/databricks-lint.yml
+    with:
+      uv_version: ${{ env.UV_VERSION }}
+      python_version: ${{ env.PYTHON_VERSION }}
+
   deploy:
-    name: "Deploy bundle"
-    runs-on: ubuntu-latest
-    environment: int
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      
-      - name: Setup Databricks CLI
-        uses: databricks/setup-cli@main
-
-      - name: Azure Login Using Service Principal
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_INT_CREDENTIALS }}
-
-      - name: Deploy Databricks Bundle
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            databricks bundle validate -t ${{ env.ENV }} -o json
-          elif [ "${{ github.event_name }}" == "push" ]; then
-            databricks bundle deploy -t ${{ env.ENV }} -o json
-          fi
-        working-directory: .
-        env:
-          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
-          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
-          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
-
-      - name: Install Task
-        if: github.event_name == 'push'
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Set Test Flows
-        if: github.event_name == 'push'
-        run: task collect-tests
-
-      - name: Run test workflows
-        if: github.event_name == 'push'
-        run: task run-tests
-        env:
-          # task file required variables
-          test_flows: ${{ env.test_flows }}
-          # bundle file required variables
-          DATABRICKS_BUNDLE_ENV: ${{ env.ENV }}
-          BUNDLE_VAR_ADB_HOST_URL: ${{ vars.ADB_HOST_URL }}
-          BUNDLE_VAR_FILE_LANDING_URL: ${{ vars.FILE_LANDING_URL }}
+      if: github.event_name == 'push'
+      uses: ./.github/workflows/reusable-deploy.yml
+      with:
+        env: dev
+      secrets:
+        azure_credentials: ${{ secrets.AZURE_INT_CREDENTIALS }}
