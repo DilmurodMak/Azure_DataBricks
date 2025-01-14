@@ -15,6 +15,7 @@ jobs:
     with:
       uv_version: ">=0.4.26"
       python_version: "3.11"
+      env: int
 
   deploy:
       if: github.event_name == 'push'
