@@ -14,6 +14,7 @@ jobs:
   deploy:
     name: Deploy DataBricks Bundle
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
 
     steps:
       - name: Checkout Repository
@@ -21,10 +22,6 @@ jobs:
 
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
-
-      - name: Debug Credentials
-        run: echo "${{ secrets.AZURE_CREDENTIALS }}"
-        shell: bash
 
       - name: Azure Login Using Service Principal
         uses: azure/login@v2
