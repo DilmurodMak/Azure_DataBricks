@@ -9,9 +9,6 @@ on:
       python_version:
         required: true
         type: string
-      env:
-        required: true
-        type: string
 
 jobs:
   lint:

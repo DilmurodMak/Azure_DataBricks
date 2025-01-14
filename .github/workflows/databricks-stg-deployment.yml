@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  validate:
+    uses: ./.github/workflows/databricks-validate.yml
+    with:
+      env: staging
+
   deploy:
     uses: ./.github/workflows/databricks-deploy.yml
     with:

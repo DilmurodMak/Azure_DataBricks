@@ -11,10 +11,15 @@ on:
 jobs:
   lint:
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/databricks-lint-validate.yml
+    uses: ./.github/workflows/databricks-lint.yml
     with:
       uv_version: ">=0.4.26"
       python_version: "3.11"
+  
+  validate:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/databricks-validate.yml
+    with:
       env: int
 
   deploy:
