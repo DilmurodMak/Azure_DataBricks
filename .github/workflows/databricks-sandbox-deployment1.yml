@@ -21,4 +21,4 @@ jobs:
       with:
         env: dev
       secrets:
-        azure_credentials: ${{ secrets.AZURE_INT_CREDENTIALS }}
+        azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
