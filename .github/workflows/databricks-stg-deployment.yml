@@ -7,6 +7,6 @@ jobs:
   deploy:
     uses: ./.github/workflows/databricks-deploy.yml
     with:
-      env: stg
+      env: staging
     secrets:
       azure_credentials: ${{ secrets.AZURE_STG_CREDENTIALS }}
