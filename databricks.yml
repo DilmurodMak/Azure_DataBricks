@@ -15,7 +15,7 @@ variables:
 
 targets:
   # Sandbox
-  sandbox:
+  int:
     presets:
       name_prefix: "sandbox_"
     workspace:
@@ -24,7 +24,7 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
 
-  dev:
+  development:
     presets:
       name_prefix: "dev_"
     default: true
@@ -34,7 +34,7 @@ targets:
     run_as:
       service_principal_name: ${workspace.current_user.userName}
 
-  stg:
+  staging:
     presets:
       name_prefix: "stg_"
     default: true

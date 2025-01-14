@@ -1,4 +1,4 @@
-name: Databricks Lint Workflow
+name: Databricks Lint
 
 on:
   workflow_call:
@@ -14,10 +14,14 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
@@ -35,3 +39,5 @@ jobs:
       - name: Run Ruff Lint
         run: |
           uv run ruff check
+
+      
